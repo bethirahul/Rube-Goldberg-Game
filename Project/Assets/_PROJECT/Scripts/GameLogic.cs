@@ -6,13 +6,13 @@ public class GameLogic : MonoBehaviour
 {
 	
 
-	// Use this for initialization
+	//   S T A R T                                                                                                      
 	void Start()
 	{
 		
 	}
 	
-	// Update is called once per frame
+	//   U P D A T E                                                                                                    
 	void Update()
 	{
 		
