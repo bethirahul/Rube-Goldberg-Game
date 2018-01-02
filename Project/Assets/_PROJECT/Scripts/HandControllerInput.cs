@@ -24,6 +24,11 @@ public class HandControllerInput : MonoBehaviour
 	private float lerpTime;
 	private Vector3 dashStartPosition;
 
+	//  WALKING   
+	public Transform playerCam;
+	private Vector3 movementDirection;
+	public float moveSpeed = 4f;
+
 	//   S T A R T                                                                                                      
 	void Start ()
 	{
@@ -35,6 +40,14 @@ public class HandControllerInput : MonoBehaviour
 	void Update()
 	{
 		device = SteamVR_Controller.Input((int)trackedObj.index);
+
+		if(device.GetPress(SteamVR_Controller.ButtonMask.Grip))
+		{
+			movementDirection = playerCam.transform.forward;
+			movementDirection = new Vector3(movementDirection.x, 0, movementDirection.z);
+			movementDirection = movementDirection * moveSpeed * Time.deltaTime;
+			player.transform.position += movementDirection;
+		}
 
 		if(isDashing)
 		{
