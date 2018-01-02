@@ -16,7 +16,13 @@ public class HandControllerInput : MonoBehaviour
 	public LayerMask laserMask;
 	public Vector3 teleportLocation;
 	public float yNudgeAmount = 1f; /// to teleport a little over the floor/ground
-	public float teleportRadius = 15f;
+	public float teleportRadius = 15f; /// teleport radius
+
+	//  DASH   
+	public float dashSpeed = 0.1f;
+	private bool isDashing;
+	private float lerpTime;
+	private Vector3 dashStartPosition;
 
 	//   S T A R T                                                                                                      
 	void Start ()
@@ -30,41 +36,56 @@ public class HandControllerInput : MonoBehaviour
 	{
 		device = SteamVR_Controller.Input((int)trackedObj.index);
 
-		if(device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+		if(isDashing)
 		{
-			laser.gameObject.SetActive(true);
-			teleporterAimerObject.SetActive(true);
-
-			laser.SetPosition(0, gameObject.transform.position);
-			RaycastHit hit;
-
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 15, laserMask))
+			lerpTime = Time.deltaTime * dashSpeed;
+			player.transform.position = Vector3.Lerp(dashStartPosition, teleportLocation, lerpTime);
+			if(lerpTime >= 1)
 			{
-				teleportLocation = hit.point;
-				laser.SetPosition(1, teleportLocation);
-
-				// Aimer Position
-				teleporterAimerObject.transform.position = teleportLocation + new Vector3(0, yNudgeAmount, 0);
+				isDashing = false;
+				lerpTime = 0;
 			}
-			else
+		}
+		else
+		{
+			if(device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
 			{
-				teleportLocation = (transform.forward * 15) + transform.position;
-				RaycastHit groundRay;
-				if(Physics.Raycast(teleportLocation, -Vector3.up, out groundRay, 17, laserMask))
+				laser.gameObject.SetActive(true);
+				teleporterAimerObject.SetActive(true);
+
+				laser.SetPosition(0, gameObject.transform.position);
+				RaycastHit hit;
+
+				if(Physics.Raycast(transform.position, transform.forward, out hit, 15, laserMask))
 				{
-					teleportLocation.y = groundRay.point.y;
-				}
-				laser.SetPosition(1, (transform.forward * 15) + transform.position);
+					teleportLocation = hit.point;
+					laser.SetPosition(1, teleportLocation);
 
-				// Aimer Position
-				teleporterAimerObject.transform.position = teleportLocation + new Vector3(0, yNudgeAmount, 0);
+					// Aimer Position
+					teleporterAimerObject.transform.position = teleportLocation + new Vector3(0, yNudgeAmount, 0);
+				}
+				else
+				{
+					teleportLocation = (transform.forward * 15) + transform.position;
+					RaycastHit groundRay;
+					if(Physics.Raycast(teleportLocation, -Vector3.up, out groundRay, 17, laserMask))
+					{
+						teleportLocation.y = groundRay.point.y;
+					}
+					laser.SetPosition(1, (transform.forward * 15) + transform.position);
+
+					// Aimer Position
+					teleporterAimerObject.transform.position = teleportLocation + new Vector3(0, yNudgeAmount, 0);
+				}
+			}
+			if(device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+			{
+				laser.gameObject.SetActive(false);
+				teleporterAimerObject.SetActive(false);
+				///player.transform.position = teleportLocation;
+				dashStartPosition = player.transform.position;
+				isDashing = true;
 			}
 		}
-		if(device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
-		{
-			laser.gameObject.SetActive(false);
-			teleporterAimerObject.SetActive(false);
-		}
-		///if(device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
 	}
 }
