@@ -5,9 +5,8 @@ using System.Runtime.CompilerServices;
 
 public class OculusControllerInput : MonoBehaviour
 {
-	//  CONTROLLER   
-	public SteamVR_TrackedObject trackedObj;
-	public SteamVR_Controller.Device device;
+	//  OCULUS
+	public OVRInput.Controller controller;
 
 	//  TELEPORTER   
 	private LineRenderer laser;
@@ -20,8 +19,8 @@ public class OculusControllerInput : MonoBehaviour
 
 	//  DASH   
 	public float dashSpeed = 0.1f;
-	private bool isDashing;
-	private float lerpTime;
+	private bool isDashing = false;
+	private float lerpTime = 0;
 	private Vector3 dashStartPosition;
 
 	//  WALKING   
@@ -36,18 +35,16 @@ public class OculusControllerInput : MonoBehaviour
 	//   S T A R T                                                                                                      
 	void Start ()
 	{
-		trackedObj = GetComponent<SteamVR_TrackedObject>();
 		laser = GetComponentInChildren<LineRenderer>();
 	}
 	
 	//   U P D A T E                                                                                                    
 	void Update()
 	{
-		device = SteamVR_Controller.Input((int)trackedObj.index);
-
 		//  TELEPORT   
-		if(OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+		if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, controller))
 		{
+			Debug.Log("Right Index finger pressed");
 			movementDirection = playerCam.transform.forward;
 			movementDirection = new Vector3(movementDirection.x, 0, movementDirection.z);
 			movementDirection = movementDirection * moveSpeed * Time.deltaTime;
@@ -66,7 +63,7 @@ public class OculusControllerInput : MonoBehaviour
 		}
 		else
 		{
-			if(OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
+			if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
 			{
 				laser.gameObject.SetActive(true);
 				teleporterAimerObject.SetActive(true);
@@ -96,7 +93,7 @@ public class OculusControllerInput : MonoBehaviour
 					teleporterAimerObject.transform.position = teleportLocation + new Vector3(0, yNudgeAmount, 0);
 				}
 			}
-			if(OVRInput.GetUp(OVRInput.Button.SecondaryIndexTrigger))
+			if(OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger))
 			{
 				laser.gameObject.SetActive(false);
 				teleporterAimerObject.SetActive(false);
