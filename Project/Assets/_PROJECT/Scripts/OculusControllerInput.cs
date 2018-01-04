@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.CompilerServices;
 
-public class HandControllerInput : MonoBehaviour
+public class OculusControllerInput : MonoBehaviour
 {
 	//  CONTROLLER   
 	public SteamVR_TrackedObject trackedObj;
@@ -46,7 +46,7 @@ public class HandControllerInput : MonoBehaviour
 		device = SteamVR_Controller.Input((int)trackedObj.index);
 
 		//  TELEPORT   
-		if(device.GetPress(SteamVR_Controller.ButtonMask.Grip))
+		if(OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
 		{
 			movementDirection = playerCam.transform.forward;
 			movementDirection = new Vector3(movementDirection.x, 0, movementDirection.z);
@@ -66,7 +66,7 @@ public class HandControllerInput : MonoBehaviour
 		}
 		else
 		{
-			if(device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+			if(OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
 			{
 				laser.gameObject.SetActive(true);
 				teleporterAimerObject.SetActive(true);
