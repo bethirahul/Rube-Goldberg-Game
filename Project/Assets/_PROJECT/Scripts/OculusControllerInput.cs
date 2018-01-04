@@ -30,8 +30,8 @@ public class OculusControllerInput : MonoBehaviour
 	public float moveSpeed = 4f;
 
 	//  GRAB/THROW   
-	public GameObject blocks;
-	public float throwForce = 1.75f;
+	/*public GameObject blocks;
+	public float throwForce = 1.75f;*/
 
 	//   S T A R T                                                                                                      
 	void Start ()
@@ -96,7 +96,7 @@ public class OculusControllerInput : MonoBehaviour
 					teleporterAimerObject.transform.position = teleportLocation + new Vector3(0, yNudgeAmount, 0);
 				}
 			}
-			if(device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+			if(OVRInput.GetUp(OVRInput.Button.SecondaryIndexTrigger))
 			{
 				laser.gameObject.SetActive(false);
 				teleporterAimerObject.SetActive(false);
@@ -107,7 +107,7 @@ public class OculusControllerInput : MonoBehaviour
 		}
 	}
 
-	void OnTriggerStay(Collider col)
+	/*void OnTriggerStay(Collider col)
 	{
 		if(col.gameObject.CompareTag("Throwable"))
 		{
@@ -138,5 +138,5 @@ public class OculusControllerInput : MonoBehaviour
 		rigidBody.velocity        = device.velocity * throwForce;
 		rigidBody.angularVelocity = device.angularVelocity;
 		Debug.Log("Object thrown");
-	}
+	}*/
 }

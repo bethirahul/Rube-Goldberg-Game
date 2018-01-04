@@ -30,8 +30,8 @@ public class HandControllerInput : MonoBehaviour
 	public float moveSpeed = 4f;
 
 	//  GRAB/THROW   
-	public GameObject blocks;
-	public float throwForce = 1.75f;
+	/*public GameObject blocks;
+	public float throwForce = 1.75f;*/
 
 	//   S T A R T                                                                                                      
 	void Start ()
@@ -107,7 +107,7 @@ public class HandControllerInput : MonoBehaviour
 		}
 	}
 
-	void OnTriggerStay(Collider col)
+	/*void OnTriggerStay(Collider col)
 	{
 		if(col.gameObject.CompareTag("Throwable"))
 		{
@@ -138,5 +138,5 @@ public class HandControllerInput : MonoBehaviour
 		rigidBody.velocity        = device.velocity * throwForce;
 		rigidBody.angularVelocity = device.angularVelocity;
 		Debug.Log("Object thrown");
-	}
+	}*/
 }
