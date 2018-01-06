@@ -24,7 +24,7 @@ public class ControllerInput : MonoBehaviour
 	}
 	
 	//   U P D A T E                                                                                                    
-	void Update()
+	public void checkInput()
 	{
 		if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, l_controller))
 		{

@@ -140,11 +140,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32be0e1eaa4af5a44a8cc973c5947f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  oculusRig: {fileID: 0}
-  level: []
+  player: {fileID: 654850352}
   currentLevel: 1
   startLevel: 1
+  l_mask: {fileID: 1466397302}
+  r_mask: {fileID: 247964546}
+  sceneChangingTime: 0.75
 --- !u!4 &170848144
 Transform:
   m_ObjectHideFlags: 0
@@ -158,6 +159,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &247964546 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1974096716671500, guid: fdaf30ce13e186d438d828bd042b3115,
+    type: 2}
+  m_PrefabInternal: {fileID: 1424282728}
 --- !u!1 &515139941
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,6 +229,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &654850352 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1299441090560506, guid: fdaf30ce13e186d438d828bd042b3115,
+    type: 2}
+  m_PrefabInternal: {fileID: 1424282728}
 --- !u!1 &668951077
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,3 +407,8 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fdaf30ce13e186d438d828bd042b3115, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1466397302 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1688063510422510, guid: fdaf30ce13e186d438d828bd042b3115,
+    type: 2}
+  m_PrefabInternal: {fileID: 1424282728}
