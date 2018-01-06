@@ -44,7 +44,7 @@ public class OculusControllerInput : MonoBehaviour
 		//  TELEPORT   
 		if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, controller))
 		{
-			Debug.Log("Right Index finger pressed");
+			Debug.Log("1(A).1: Index finger is being pressed");
 			movementDirection = playerCam.transform.forward;
 			movementDirection = new Vector3(movementDirection.x, 0, movementDirection.z);
 			movementDirection = movementDirection * moveSpeed * Time.deltaTime;
@@ -53,6 +53,7 @@ public class OculusControllerInput : MonoBehaviour
 
 		if(isDashing)
 		{
+			Debug.Log("2(A).1: Moving");
 			lerpTime = Time.deltaTime * dashSpeed;
 			player.transform.position = Vector3.Lerp(dashStartPosition, teleportLocation, lerpTime);
 			if(lerpTime >= 1)
@@ -63,8 +64,10 @@ public class OculusControllerInput : MonoBehaviour
 		}
 		else
 		{
+			Debug.Log("2(B).1: Not moving");
 			if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger))
 			{
+				Debug.Log("2(B).2.1: Index finger is being pressed");
 				laser.gameObject.SetActive(true);
 				teleporterAimerObject.SetActive(true);
 
@@ -73,6 +76,7 @@ public class OculusControllerInput : MonoBehaviour
 
 				if(Physics.Raycast(transform.position, transform.forward, out hit, 15, laserMask))
 				{
+					Debug.Log("2(B).2.2(A): Ray hitting obstacle");
 					teleportLocation = hit.point;
 					laser.SetPosition(1, teleportLocation);
 
@@ -81,6 +85,7 @@ public class OculusControllerInput : MonoBehaviour
 				}
 				else
 				{
+					Debug.Log("2(B).2.2(B): Ray not hitting anything");
 					teleportLocation = (transform.forward * 15) + transform.position;
 					RaycastHit groundRay;
 					if(Physics.Raycast(teleportLocation, -Vector3.up, out groundRay, 17, laserMask))
@@ -95,6 +100,7 @@ public class OculusControllerInput : MonoBehaviour
 			}
 			if(OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger))
 			{
+				Debug.Log("2(B).3.1: Released Index Button");
 				laser.gameObject.SetActive(false);
 				teleporterAimerObject.SetActive(false);
 				///player.transform.position = teleportLocation;

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Throwable
+  - Button
   layers:
   - Default
   - TransparentFX
