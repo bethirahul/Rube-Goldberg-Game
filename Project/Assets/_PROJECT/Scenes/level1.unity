@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 654850352}
+  r_controller_GO: {fileID: 1424282729}
   currentLevel: 1
   startLevel: 1
   l_mask: {fileID: 1466397302}
@@ -400,13 +401,19 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1299441090560506, guid: fdaf30ce13e186d438d828bd042b3115, type: 2}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
+    - target: {fileID: 114502539483619840, guid: fdaf30ce13e186d438d828bd042b3115,
+        type: 2}
+      propertyPath: gameLogic
+      value: 
+      objectReference: {fileID: 170848143}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fdaf30ce13e186d438d828bd042b3115, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1424282729 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1418977695927994, guid: fdaf30ce13e186d438d828bd042b3115,
+    type: 2}
+  m_PrefabInternal: {fileID: 1424282728}
 --- !u!1 &1466397302 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1688063510422510, guid: fdaf30ce13e186d438d828bd042b3115,

@@ -4,37 +4,43 @@ using UnityEngine;
 
 public class ControllerInput : MonoBehaviour
 {
+	public GameLogic gameLogic;
+
 	//  OCULUS
-	public OVRInput.Controller l_controller;
+	///public OVRInput.Controller l_controller;
 	public OVRInput.Controller r_controller;
-	public GameObject l_controller_GO;
+	///public GameObject l_controller_GO;
 	public GameObject r_controller_GO;
 
 	//  RAY CASTING
-	public LineRenderer l_ray;
+	///public LineRenderer l_ray;
 	public LineRenderer r_ray;
-	///public LayerMask rayRange;
+	public LayerMask rayRange;
 	public float rayRadius;
+
+	//  HOLDING
+	private enum Action
+	{
+		none,
+		holding,
+		rayCasting,
+		menu
+	};
+	private Action action;
 
 	//   S T A R T                                                                                                      
 	void Start()
 	{
-		l_ray.gameObject.SetActive(false);
+		///l_ray.gameObject.SetActive(false);
 		r_ray.gameObject.SetActive(false);
 	}
 	
 	//   U P D A T E                                                                                                    
 	public void checkInput()
 	{
-		if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, l_controller))
+		if(OVRInput.Get(OVRInput.Button.Two, r_controller))
 		{
-			///Debug.Log("Left Index Trigger is being pressed");
-			l_ray.gameObject.SetActive(true);
-		}
-
-		if(OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, r_controller))
-		{
-			///Debug.Log("Right Index Trigger is being pressed");
+			///Debug.Log("B button is being pressed");
 			r_ray.gameObject.SetActive(true);
 			r_ray.SetPosition(0, r_controller_GO.transform.position);
 
@@ -54,20 +60,28 @@ public class ControllerInput : MonoBehaviour
 			{
 				Debug.Log("Ray not hitting anything");
 				r_ray.SetPosition(1,
-								  (r_controller_GO.transform.forward * rayRadius) + r_controller_GO.transform.position);
+				                  (r_controller_GO.transform.forward * rayRadius) + r_controller_GO.transform.position);
 			}
 		}
 
-		if(OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, l_controller))
+		if(OVRInput.GetUp(OVRInput.Button.Two, r_controller))
 		{
-			///Debug.Log("Left Index Trigger released");
-			l_ray.gameObject.SetActive(false);
-		}
-
-		if(OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, r_controller))
-		{
-			///Debug.Log("Right Index Trigger released");
+			Debug.Log("B button released");
 			r_ray.gameObject.SetActive(false);
+			RaycastHit hit;
+			Vector3 teleportLocation;
+			if(Physics.Raycast(r_controller_GO.transform.position,
+			                   r_controller_GO.transform.forward, out hit, rayRadius))///, rayRange))
+			{
+				Debug.Log("Ray hit an obstacle");
+				teleportLocation = hit.point;
+			}
+			else
+			{
+				Debug.Log("Ray didn't hit anything");
+				teleportLocation = (r_controller_GO.transform.forward * rayRadius) + r_controller_GO.transform.position;
+			}
+			gameLogic.teleport(teleportLocation);
 		}
 	}
 }

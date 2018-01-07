@@ -262,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1266333572}
+  r_controller_GO: {fileID: 1815401435}
   currentLevel: 0
   startLevel: 1
   l_mask: {fileID: 312008111}
@@ -479,7 +480,7 @@ MonoBehaviour:
 GameObject:
   m_PrefabParentObject: {fileID: 1688063510422510, guid: fdaf30ce13e186d438d828bd042b3115,
     type: 2}
-  m_PrefabInternal: {fileID: 1815401434}
+  m_PrefabInternal: {fileID: 1943534322}
 --- !u!1 &387161858
 GameObject:
   m_ObjectHideFlags: 0
@@ -617,7 +618,7 @@ Transform:
 Transform:
   m_PrefabParentObject: {fileID: 4577780265090166, guid: fdaf30ce13e186d438d828bd042b3115,
     type: 2}
-  m_PrefabInternal: {fileID: 1815401434}
+  m_PrefabInternal: {fileID: 1943534322}
 --- !u!1 &668951077
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,7 +782,7 @@ CanvasRenderer:
 GameObject:
   m_PrefabParentObject: {fileID: 1974096716671500, guid: fdaf30ce13e186d438d828bd042b3115,
     type: 2}
-  m_PrefabInternal: {fileID: 1815401434}
+  m_PrefabInternal: {fileID: 1943534322}
 --- !u!4 &1021150318 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4053252613051742, guid: 766ba3853ee428e4cb765fb6495eb4c0,
@@ -791,7 +792,7 @@ Transform:
 GameObject:
   m_PrefabParentObject: {fileID: 1299441090560506, guid: fdaf30ce13e186d438d828bd042b3115,
     type: 2}
-  m_PrefabInternal: {fileID: 1815401434}
+  m_PrefabInternal: {fileID: 1943534322}
 --- !u!1 &1286751471
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,7 +995,12 @@ Transform:
   m_Father: {fileID: 98515903}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1815401434
+--- !u!1 &1815401435 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1418977695927994, guid: fdaf30ce13e186d438d828bd042b3115,
+    type: 2}
+  m_PrefabInternal: {fileID: 1943534322}
+--- !u!1001 &1943534322
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1033,6 +1039,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114502539483619840, guid: fdaf30ce13e186d438d828bd042b3115,
+        type: 2}
+      propertyPath: gameLogic
+      value: 
+      objectReference: {fileID: 168065659}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fdaf30ce13e186d438d828bd042b3115, type: 2}
   m_IsPrefabParent: 0
