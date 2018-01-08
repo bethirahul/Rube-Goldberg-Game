@@ -107,7 +107,7 @@ public class GameLogic : MonoBehaviour
 			r_maskRend.material.color = color;
 			if(fraction >= 1f)
 			{
-				SceneManager.LoadScene("level" + currentLevel);
+				SceneManager.LoadScene("Level" + currentLevel);
 			}
 		}
 		else
