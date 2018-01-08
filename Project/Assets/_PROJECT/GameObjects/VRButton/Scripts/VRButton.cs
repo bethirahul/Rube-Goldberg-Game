@@ -9,6 +9,7 @@ public class VRButton : MonoBehaviour
 	private Renderer rend;
 	public Color normalColor;
 	public Color highlightColor;
+	public Color clickColor;
 	public enum buttonType
 	{
 		start,
@@ -27,10 +28,16 @@ public class VRButton : MonoBehaviour
 		rend.material.color = normalColor;
 	}
 
-	public void buttonClick()
+	public void hover()
 	{
 		Debug.Log("Ray Hit");
 		rend.material.color = highlightColor;
+	}
+
+	public void click()
+	{
+		Debug.Log("Button clicked");
+		rend.material.color = clickColor;
 		if(type == buttonType.start)
 		{
 			gameLogic.startButton();

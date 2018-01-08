@@ -53,7 +53,7 @@ public class ControllerInput : MonoBehaviour
 				if(hit.transform.tag == "Button")
 				{
 					Debug.Log("Its a Button");
-					hit.collider.gameObject.GetComponent<VRButton>().buttonClick();
+					hit.collider.gameObject.GetComponent<VRButton>().hover();
 				}
 			}
 			else
@@ -74,14 +74,24 @@ public class ControllerInput : MonoBehaviour
 			                   r_controller_GO.transform.forward, out hit, rayRadius))///, rayRange))
 			{
 				Debug.Log("Ray hit an obstacle");
-				teleportLocation = hit.point;
+				if(hit.transform.tag == "Button")
+				{
+					Debug.Log("Its a Button");
+					hit.collider.gameObject.GetComponent<VRButton>().click();
+				}
+				else
+				{
+					teleportLocation = hit.point;
+					gameLogic.teleport(teleportLocation);
+				}
 			}
 			else
 			{
 				Debug.Log("Ray didn't hit anything");
 				teleportLocation = (r_controller_GO.transform.forward * rayRadius) + r_controller_GO.transform.position;
+				gameLogic.teleport(teleportLocation);
 			}
-			gameLogic.teleport(teleportLocation);
+
 		}
 	}
 }
