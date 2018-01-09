@@ -15,8 +15,8 @@ public class ControllerInput : MonoBehaviour
 	//  RAY CASTING
 	///public LineRenderer l_ray;
 	public LineRenderer r_ray;
-	public LayerMask rayRange;
-	public float rayRadius;
+	public LayerMask rayMask;
+	public float rayRange;
 
 	//  HOLDING
 	private enum Action
@@ -27,6 +27,9 @@ public class ControllerInput : MonoBehaviour
 		menu
 	};
 	private Action action;
+
+	//  TELEPORT
+	public GameObject teleportLocation_GO;
 
 	//   S T A R T                                                                                                      
 	void Start()
@@ -46,21 +49,52 @@ public class ControllerInput : MonoBehaviour
 
 			RaycastHit hit;
 			if(Physics.Raycast(r_controller_GO.transform.position,
-			                   r_controller_GO.transform.forward, out hit, rayRadius))///, rayRange))
+			                   r_controller_GO.transform.forward, out hit, rayRange, rayMask))
 			{
-				Debug.Log("Ray hitting obstacle");
+				///float dist = Vector3.Distance(r_controller_GO.transform.position, hit.point);
+				///Debug.Log("1. Ray hitting something " + hit.point + "; Distance: " + dist);
 				r_ray.SetPosition(1, hit.point);
 				if(hit.transform.tag == "Button")
 				{
-					Debug.Log("Its a Button");
+					///Debug.Log("1.1. Its a Button");
 					hit.collider.gameObject.GetComponent<VRButton>().hover();
+				}
+				else
+				{
+					RaycastHit groundHit;
+					if(Physics.Raycast(hit.point, -Vector3.up, out groundHit, rayRange, rayMask))
+					{
+						///Debug.Log("1.3.1. Ground Ray hitting ground at " + groundHit.point);
+						teleportLocation_GO.transform.position = groundHit.point;
+						teleportLocation_GO.SetActive(true);
+					}
+					else
+					{
+						teleportLocation_GO.SetActive(false);
+						Debug.Log("1.3.2. Ground Ray not hitting ground: Cannot Teleport!");
+					}
 				}
 			}
 			else
 			{
-				Debug.Log("Ray not hitting anything");
-				r_ray.SetPosition(1,
-				                  (r_controller_GO.transform.forward * rayRadius) + r_controller_GO.transform.position);
+				Vector3 rayEndPoint = (r_controller_GO.transform.forward * rayRange) +
+									  r_controller_GO.transform.position;
+				///float dist = Vector3.Distance(r_controller_GO.transform.position, rayEndPoint);
+				///Debug.Log("2. Ray not hitting anything, end point is at " + rayEndPoint + "; Distance: " + dist);
+				r_ray.SetPosition(1, rayEndPoint);
+
+				RaycastHit groundHit;
+				if(Physics.Raycast(rayEndPoint, -Vector3.up, out groundHit, rayRange, rayMask))
+				{
+					///Debug.Log("2.1. Ground Ray hitting ground at " + groundHit.point);
+					teleportLocation_GO.transform.position = groundHit.point;
+					teleportLocation_GO.SetActive(true);
+				}
+				else
+				{
+					teleportLocation_GO.SetActive(false);
+					Debug.Log("2.2. Ground Ray not hitting ground: Cannot Teleport!");
+				}
 			}
 		}
 
@@ -68,30 +102,51 @@ public class ControllerInput : MonoBehaviour
 		{
 			Debug.Log("B button released");
 			r_ray.gameObject.SetActive(false);
+			teleportLocation_GO.SetActive(false);
+
 			RaycastHit hit;
-			Vector3 teleportLocation;
 			if(Physics.Raycast(r_controller_GO.transform.position,
-			                   r_controller_GO.transform.forward, out hit, rayRadius))///, rayRange))
+			                   r_controller_GO.transform.forward, out hit, rayRange, rayMask))
 			{
-				Debug.Log("Ray hit an obstacle");
+				///Debug.Log("Ray hit an obstacle");
 				if(hit.transform.tag == "Button")
 				{
-					Debug.Log("Its a Button");
+					Debug.Log("Button clicked");
 					hit.collider.gameObject.GetComponent<VRButton>().click();
 				}
 				else
 				{
-					teleportLocation = hit.point;
-					gameLogic.teleport(teleportLocation);
+					RaycastHit groundHit;
+					if(Physics.Raycast(hit.point, -Vector3.up, out groundHit, rayRange, rayMask))
+					{
+						///Debug.Log("1.3.1. Ground Ray hitting ground at " + groundHit.point);
+						gameLogic.teleport(teleportLocation_GO.transform.position);
+					}
+					else
+					{
+						Debug.Log("1.3.2. Ground Ray not hitting ground: Cannot Teleport!");
+					}
 				}
 			}
 			else
 			{
-				Debug.Log("Ray didn't hit anything");
-				teleportLocation = (r_controller_GO.transform.forward * rayRadius) + r_controller_GO.transform.position;
-				gameLogic.teleport(teleportLocation);
-			}
+				Vector3 rayEndPoint = (r_controller_GO.transform.forward * rayRange) +
+									  r_controller_GO.transform.position;
+				///float dist = Vector3.Distance(r_controller_GO.transform.position, rayEndPoint);
+				///Debug.Log("2. Ray not hitting anything, end point is at " + rayEndPoint + "; Distance: " + dist);
+				r_ray.SetPosition(1, rayEndPoint);
 
+				RaycastHit groundHit;
+				if(Physics.Raycast(rayEndPoint, -Vector3.up, out groundHit, rayRange, rayMask))
+				{
+					///Debug.Log("2.1. Ground Ray hitting ground at " + groundHit.point);
+					gameLogic.teleport(teleportLocation_GO.transform.position);
+				}
+				else
+				{
+					Debug.Log("2.2. Ground Ray not hitting ground: Cannot Teleport!");
+				}
+			}
 		}
 	}
 }

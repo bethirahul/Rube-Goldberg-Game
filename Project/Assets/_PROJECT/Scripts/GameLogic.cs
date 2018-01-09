@@ -121,7 +121,7 @@ public class GameLogic : MonoBehaviour
 		if(currentLevel != 0)
 		{
 			Debug.Log("Teleporting to: " + teleportLocation);
-
+			player.transform.position = teleportLocation;
 		}
 	}
 }
