@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameLogic : MonoBehaviour
 {
-	public GameObject player;
+	public Player player;
 	private ControllerInput controllerInput;
 	///public GameObject l_controller_GO;
 	public GameObject r_controller_GO;
@@ -31,66 +31,67 @@ public class GameLogic : MonoBehaviour
 	//   S T A R T                                                                                                      
 	void Start()
 	{
-		Debug.Log("GameLogic started");
-		controllerInput = player.GetComponent<ControllerInput>();
+		InitForAllLevels();
+		InitFromLevel1();
+	}
+
+	//  INIT for ALL LEVELS
+	private void InitForAllLevels()
+	{
+		// Components
+		controllerInput = player.gameObject.GetComponent<ControllerInput>();
 		l_maskRend = l_mask.GetComponent<Renderer>();
 		r_maskRend = r_mask.GetComponent<Renderer>();
+
+		// Player
+		player.Init();
+
+		// Scene Transition
 		sceneTransition = SceneTransition.starting;
-		if(currentLevel == 0)
-		{
-			Debug.Log("Game started!");
-			initGame();
-		}
-		else
-		{
-			Debug.Log("Level " + currentLevel + " started!");
-		}
-		initSceneChange();
+		InitSceneTransition();
 	}
 
-	private void initGame()
+	//  SCENE TRANSITION
+	private void InitSceneTransition()
 	{
-		Debug.Log("Game initiated!");
-	}
-
-	public void startButton()
-	{
-		Debug.Log("Start Button pressed!");
-		currentLevel = startLevel;
-		sceneTransition = SceneTransition.ending;
-		initSceneChange();
-		///SceneManager.LoadScene("level" + currentLevel);
-	}
-
-	private void initSceneChange()
-	{
-		Debug.Log("Changing Scene Anim Started");
 		l_mask.SetActive(true);
 		r_mask.SetActive(true);
-		///l_controller_GO.SetActive(false);
 		r_controller_GO.SetActive(false);
 		startTime = Time.time;
 		endTime = startTime + sceneChangingTime;
-		Debug.Log("1. Current Time is " + startTime);
-		Debug.Log("1. End Time is " + endTime);
 	}
-	
+
+	//  INIT from LEVEL 1
+	private void InitFromLevel1()
+	{
+		
+	}
+
 	//   U P D A T E                                                                                                    
 	void Update()
+	{
+		CheckSceneTransition();
+		CheckInput();
+		TeleportPlayer();
+		MoveGameObjects();
+	}
+
+	//  SCENE TRANSITION
+	private void CheckSceneTransition()
 	{
 		if(sceneTransition == SceneTransition.starting)
 		{
 			float fraction = 1f - ((Time.time - startTime) / sceneChangingTime);
-			Debug.Log("2. Now the time is " + Time.time);
-			Debug.Log("2. Elapsed time: " + (Time.time - startTime));
-			Debug.Log("2. fraction: " + fraction);
+			///Debug.Log("2. Now the time is " + Time.time);
+			///Debug.Log("2. Elapsed time: " + (Time.time - startTime));
+			///Debug.Log("2. fraction: " + fraction);
 			Color color = l_maskRend.material.color;
 			color = new Color(color.r, color.g, color.b, fraction);
 			l_maskRend.material.color = color;
 			r_maskRend.material.color = color;
 			if(fraction <= 0f)
 			{
-				Debug.Log("3. Scene Anim Complete");
+				///Debug.Log("3. Scene Anim Complete");
 				sceneTransition = SceneTransition.complete;
 				l_mask.SetActive(false);
 				r_mask.SetActive(false);
@@ -101,27 +102,48 @@ public class GameLogic : MonoBehaviour
 		else if(sceneTransition == SceneTransition.ending)
 		{
 			float fraction = (Time.time - startTime) / sceneChangingTime;
-			Color color = l_maskRend.material.color;
-			color = new Color(color.r, color.g, color.b, fraction);
-			l_maskRend.material.color = color;
-			r_maskRend.material.color = color;
+			Color myColor = l_maskRend.material.color;
+			myColor = new Color(myColor.r, myColor.g, myColor.b, fraction);
+			l_maskRend.material.color = myColor;
+			r_maskRend.material.color = myColor;
 			if(fraction >= 1f)
-			{
 				SceneManager.LoadScene("Level" + currentLevel);
-			}
-		}
-		else
-		{
-			controllerInput.checkInput();
 		}
 	}
 
-	public void teleport(Vector3 teleportLocation)
+	//  INPUT
+	private void CheckInput()
 	{
-		if(currentLevel != 0)
-		{
-			Debug.Log("Teleporting to: " + teleportLocation);
-			player.transform.position = teleportLocation;
-		}
+		if(sceneTransition == SceneTransition.complete)
+			controllerInput.CheckInput();
+	}
+
+	//  BUTTONS
+	public void startButton()
+	{
+		Debug.Log("Start Button pressed!");
+		currentLevel = startLevel;
+		sceneTransition = SceneTransition.ending;
+		InitSceneTransition();
+		///SceneManager.LoadScene("level" + currentLevel);
+	}
+
+	//  TELEPORT PLAYER
+	public void InitTeleportPlayer(Vector3 tLoc)
+	{
+		if(currentLevel != 0 && sceneTransition == SceneTransition.complete)
+			player.InitTeleport(tLoc);
+	}
+
+	private void TeleportPlayer()
+	{
+		if(sceneTransition == SceneTransition.complete)
+			player.Teleport();
+	}
+
+	// MOVE GAME OBJECTS
+	private void MoveGameObjects()
+	{
+		
 	}
 }
