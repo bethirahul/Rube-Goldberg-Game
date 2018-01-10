@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
 	private Vector3 teleportLocation;
 	public float teleportSpeed;
 	private Vector3 startPosition;
+	private float lerpDistance;
+	private float totalDistance;
 	
 	//   S T A R T                                                                                                      
 	public void Init()
@@ -20,6 +22,8 @@ public class Player : MonoBehaviour
 		teleportLocation = tLoc;
 		startPosition = gameObject.transform.position;
 		isMoving = true;
+		lerpDistance = 0;
+		totalDistance = Vector3.Distance(startPosition, teleportLocation);
 	}
 
 	//   U P D A T E                                                                                                    
@@ -27,15 +31,13 @@ public class Player : MonoBehaviour
 	{
 		if(isMoving)
 		{
-			float dist = Vector3.Distance(startPosition, gameObject.transform.position);
-			if(dist <= teleportSpeed)
+			///gameObject.transform.position = teleportLocation;
+			lerpDistance = lerpDistance + ((Time.deltaTime * teleportSpeed) / totalDistance);
+			gameObject.transform.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
+			if(lerpDistance >= 1)
 			{
 				gameObject.transform.position = teleportLocation;
 				isMoving = false;
-			}
-			else
-			{
-				gameObject.transform.position = teleportLocation;
 			}
 		}
 	}
