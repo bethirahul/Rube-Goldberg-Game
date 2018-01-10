@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using UnityEngine.WSA;
+using UnityEngine.Experimental.U2D;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
@@ -10,8 +14,17 @@ public class Player : MonoBehaviour
 	private Vector3 startPosition;
 	private float lerpDistance;
 	private float totalDistance;
+	public float moveSpeed;
+
+	public GameObject camera;
+	private Collider collider;
 	
 	//   S T A R T                                                                                                      
+	void Start()
+	{
+		collider = GetComponent<Collider>();
+	}
+
 	public void Init()
 	{
 		isMoving = false;
@@ -40,5 +53,27 @@ public class Player : MonoBehaviour
 				isMoving = false;
 			}
 		}
+	}
+
+	public void Move(Vector2 joystickInput)
+	{
+		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
+		Vector3 cameraDirection = new Vector3(camera.transform.forward.x, 0, camera.transform.forward.z);
+		/*float angle1 = GetAngle(Vector3.forward, cameraDirection);
+		float angle2 = GetAngle(Vector3.forward, joystickDirection);
+		float angle3 = angle1 + angle2;*/
+		float angle = AngleBetween(Vector3.forward, cameraDirection) + AngleBetween(Vector3.forward, joystickDirection);
+		Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
+		direction = direction * moveSpeed * Time.deltaTime;
+		gameObject.transform.position = gameObject.transform.position + direction;
+	}
+
+	private float AngleBetween(Vector3 first, Vector3 second)
+	{
+		float angle = Vector3.Angle(first, second);
+		Vector3 cross = Vector3.Cross(first, second);
+		if(cross.y < 0)
+			angle = -angle;
+		return angle;
 	}
 }

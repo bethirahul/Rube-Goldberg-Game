@@ -5,6 +5,7 @@ using UnityEngine;
 public class ControllerInput : MonoBehaviour
 {
 	public GameLogic gameLogic;
+	public Player player;
 
 	//  OCULUS
 	///public OVRInput.Controller l_controller;
@@ -36,6 +37,7 @@ public class ControllerInput : MonoBehaviour
 	{
 		///l_ray.gameObject.SetActive(false);
 		r_ray.gameObject.SetActive(false);
+		player = GetComponent<Player>();
 	}
 	
 	//   U P D A T E                                                                                                    
@@ -54,8 +56,8 @@ public class ControllerInput : MonoBehaviour
 
 				if(hit.transform.tag == "Button")
 					hit.collider.gameObject.GetComponent<VRButton>().hover();
-				
-				else if(hit.transform.tag == "Ground")
+				else
+				if(hit.transform.tag == "Ground")
 				{
 					teleportLocation_GO.transform.position = hit.point;
 					teleportLocation_GO.SetActive(true);
@@ -66,7 +68,7 @@ public class ControllerInput : MonoBehaviour
 			else
 			{
 				Vector3 rayEndPoint = (r_controller_GO.transform.forward * rayRange) +
-									  r_controller_GO.transform.position;
+				                      r_controller_GO.transform.position;
 				r_ray.SetPosition(1, rayEndPoint);
 
 				GroundRay(rayEndPoint, true);
@@ -85,8 +87,8 @@ public class ControllerInput : MonoBehaviour
 			{
 				if(hit.transform.tag == "Button")
 					hit.collider.gameObject.GetComponent<VRButton>().click();
-
-				else if(hit.transform.tag == "Ground")
+				else
+				if(hit.transform.tag == "Ground")
 				{
 					gameLogic.InitTeleportPlayer(hit.point);
 				}
@@ -96,12 +98,18 @@ public class ControllerInput : MonoBehaviour
 			else
 			{
 				Vector3 rayEndPoint = (r_controller_GO.transform.forward * rayRange) +
-									  r_controller_GO.transform.position;
+				                      r_controller_GO.transform.position;
 				r_ray.SetPosition(1, rayEndPoint);
 
 				GroundRay(rayEndPoint, false);
 			}
 		}
+
+		Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, r_controller);
+		if(joystickInput != Vector2.zero)
+			player.Move(joystickInput);
+		/*else
+			player.StopMoving();*/
 	}
 
 	private void GroundRay(Vector3 startPoint, bool isButtonPress)
