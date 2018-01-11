@@ -53,11 +53,11 @@ public class Player : MonoBehaviour
 		if(isMoving)
 		{
 			lerpDistance = lerpDistance + ((Time.deltaTime * teleportSpeed) / totalDistance);
-			///gameObject.transform.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
 			rigidbody.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
 			if(lerpDistance >= 1)
 			{
-				rigidbody.position = teleportLocation;
+				///rigidbody.position = teleportLocation;
+				transform.position = teleportLocation;
 				isMoving = false;
 				rigidbody.isKinematic = false;
 			}
@@ -66,24 +66,27 @@ public class Player : MonoBehaviour
 
 	public void Move(Vector2 joystickInput)
 	{
-		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
+		/*Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
 		Vector3 cameraDirection = new Vector3(camera.transform.forward.x, 0, camera.transform.forward.z);
-		/*float angle1 = GetAngle(Vector3.forward, cameraDirection);
-		float angle2 = GetAngle(Vector3.forward, joystickDirection);
-		float angle3 = angle1 + angle2;*/
 		float angle = AngleBetween(Vector3.forward, cameraDirection) + AngleBetween(Vector3.forward, joystickDirection);
 		Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
 		direction = direction * moveSpeed * Time.deltaTime;
-		///gameObject.transform.position = gameObject.transform.position + direction;
-		rigidbody.position += direction;
+		rigidbody.position += direction;*/
+
+		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
+		Vector3 direction = camera.transform.TransformDirection(joystickDirection);
+		direction = new Vector3(direction.x, 0, direction.z);
+		direction = direction * moveSpeed * Time.deltaTime;
+		///rigidbody.position += direction;
+		transform.position += direction;
 	}
 
-	private float AngleBetween(Vector3 first, Vector3 second)
+	/*private float AngleBetween(Vector3 first, Vector3 second)
 	{
 		float angle = Vector3.Angle(first, second);
 		Vector3 cross = Vector3.Cross(first, second);
 		if(cross.y < 0)
 			angle = -angle;
 		return angle;
-	}
+	}*/
 }

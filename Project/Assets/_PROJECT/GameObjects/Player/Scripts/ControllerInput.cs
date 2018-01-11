@@ -192,9 +192,10 @@ public class ControllerInput : MonoBehaviour
 		Rigidbody rigidbody = holdingObject.GetComponent<Rigidbody>();
 		rigidbody.isKinematic = false;
 		Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
-		rigidbody.velocity = OVRInput.GetLocalControllerVelocity(r_controller) * throwForce;
-
-		rigidbody.angularVelocity = OVRInput.GetLocalControllerAngularVelocity(r_controller);
+		rigidbody.velocity =
+						transform.TransformDirection(OVRInput.GetLocalControllerVelocity(r_controller)) * throwForce;
+		rigidbody.angularVelocity =
+						transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(r_controller));
 		holdingObject = null;
 		Debug.Log("Object Released with velocity: " + rigidbody.velocity + ", angular: " + rigidbody.angularVelocity);
 	}
