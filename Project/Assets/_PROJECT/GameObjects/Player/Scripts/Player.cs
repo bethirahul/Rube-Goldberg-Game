@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
 	public float moveSpeed;
 
 	public GameObject camera;
+	///public GameObject r_controller_GO;
 	private Collider collider;
 	private Rigidbody rigidbody;
 	#endregion
@@ -27,6 +28,8 @@ public class Player : MonoBehaviour
 	{
 		collider = GetComponent<Collider>();
 		rigidbody = GetComponent<Rigidbody>();
+		rigidbody.mass = 70;
+		///Physics.IgnoreCollision(collider, r_controller_GO.GetComponent<Collider>());
 	}
 
 	public void Init()
@@ -49,9 +52,9 @@ public class Player : MonoBehaviour
 	{
 		if(isMoving)
 		{
-			///gameObject.transform.position = teleportLocation;
 			lerpDistance = lerpDistance + ((Time.deltaTime * teleportSpeed) / totalDistance);
-			gameObject.transform.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
+			///gameObject.transform.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
+			rigidbody.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
 			if(lerpDistance >= 1)
 			{
 				gameObject.transform.position = teleportLocation;
@@ -71,7 +74,8 @@ public class Player : MonoBehaviour
 		float angle = AngleBetween(Vector3.forward, cameraDirection) + AngleBetween(Vector3.forward, joystickDirection);
 		Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
 		direction = direction * moveSpeed * Time.deltaTime;
-		gameObject.transform.position = gameObject.transform.position + direction;
+		///gameObject.transform.position = gameObject.transform.position + direction;
+		rigidbody.position = gameObject.transform.position + direction;
 	}
 
 	private float AngleBetween(Vector3 first, Vector3 second)

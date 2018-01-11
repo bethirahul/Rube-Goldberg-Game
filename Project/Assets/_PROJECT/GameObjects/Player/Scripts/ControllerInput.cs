@@ -175,6 +175,7 @@ public class ControllerInput : MonoBehaviour
 	{
 		holdingObject.transform.SetParent(r_controller_GO.transform);
 		holdingObject.GetComponent<Rigidbody>().isKinematic = true;
+		Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>());
 		Debug.Log("Holding object");
 	}
 
@@ -184,6 +185,7 @@ public class ControllerInput : MonoBehaviour
 		holdingObject.transform.SetParent(null);
 		Rigidbody rigidbody = holdingObject.GetComponent<Rigidbody>();
 		rigidbody.isKinematic = false;
+		Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
 		rigidbody.velocity = OVRInput.GetLocalControllerVelocity(r_controller) * throwForce;
 
 		rigidbody.angularVelocity = OVRInput.GetLocalControllerAngularVelocity(r_controller);
