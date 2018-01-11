@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.iOS;
 
 public class ControllerInput : MonoBehaviour
 {
+	#region Global_Variables
 	public GameLogic gameLogic;
 	public Player player;
 
@@ -20,17 +22,13 @@ public class ControllerInput : MonoBehaviour
 	public float rayRange;
 
 	//  HOLDING
-	private enum Action
-	{
-		none,
-		holding,
-		rayCasting,
-		menu
-	};
-	private Action action;
+	private bool isMenuOpen;
+	private GameObject holdingObject;
+	public float throwForce;
 
 	//  TELEPORT
 	public GameObject teleportLocation_GO;
+	#endregion
 
 	//   S T A R T                                                                                                      
 	void Start()
@@ -39,10 +37,20 @@ public class ControllerInput : MonoBehaviour
 		r_ray.gameObject.SetActive(false);
 		player = GetComponent<Player>();
 	}
+
+	// Init
+	public void Init()
+	{
+		isMenuOpen = false;
+		holdingObject = null;
+	}
 	
 	//   U P D A T E                                                                                                    
+
+	// INPUT
 	public void CheckInput()
 	{
+		// B Button Press
 		if(OVRInput.Get(OVRInput.Button.Two, r_controller))
 		{
 			r_ray.gameObject.SetActive(true);
@@ -75,6 +83,7 @@ public class ControllerInput : MonoBehaviour
 			}
 		}
 
+		// B Button Up
 		if(OVRInput.GetUp(OVRInput.Button.Two, r_controller))
 		{
 			Debug.Log("B button released");
@@ -105,13 +114,28 @@ public class ControllerInput : MonoBehaviour
 			}
 		}
 
+		// Joystick
 		Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, r_controller);
 		if(joystickInput != Vector2.zero)
-			player.Move(joystickInput);
-		/*else
-			player.StopMoving();*/
+		{
+			if(!isMenuOpen)
+				player.Move(joystickInput);
+			else
+			{
+				
+			}
+		}
+
+		// Hand Trigger Up
+		if(OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger, r_controller))
+		{
+			Debug.Log("Hand Trigger Released");
+			if(holdingObject != null)
+				ReleaseObject();
+		}
 	}
 
+	// Ground Ray
 	private void GroundRay(Vector3 startPoint, bool isButtonPress)
 	{
 		RaycastHit groundHit;
@@ -132,5 +156,38 @@ public class ControllerInput : MonoBehaviour
 			Debug.Log("Ground Ray didn't hit ground: Cannot Teleport!");
 			Debug.Log("First Ray end: " + startPoint);
 		}
+	}
+
+	// HOLDING
+	public void CheckGrabInput(Collider collider)
+	{
+		Debug.Log("Controller colliding with object of tag: " + collider.transform.tag);
+		if(OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, r_controller) && collider.transform.tag == "Throwable")
+		{
+			Debug.Log("Hand Trigger Pressed down");
+			holdingObject = collider.gameObject;
+			GrabObject();
+		}
+	}
+
+	// Grab
+	private void GrabObject()
+	{
+		holdingObject.transform.SetParent(r_controller_GO.transform);
+		holdingObject.GetComponent<Rigidbody>().isKinematic = true;
+		Debug.Log("Holding object");
+	}
+
+	// Release
+	private void ReleaseObject()
+	{
+		holdingObject.transform.SetParent(null);
+		Rigidbody rigidbody = holdingObject.GetComponent<Rigidbody>();
+		rigidbody.isKinematic = false;
+		rigidbody.velocity = OVRInput.GetLocalControllerVelocity(r_controller) * throwForce;
+
+		rigidbody.angularVelocity = OVRInput.GetLocalControllerAngularVelocity(r_controller);
+		holdingObject = null;
+		Debug.Log("Object Released with velocity: " + rigidbody.velocity + ", angular: " + rigidbody.angularVelocity);
 	}
 }

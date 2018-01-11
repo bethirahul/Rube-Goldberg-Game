@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
+	#region Global_Variables
 	private bool isMoving;
 	private Vector3 teleportLocation;
 	public float teleportSpeed;
@@ -18,11 +19,14 @@ public class Player : MonoBehaviour
 
 	public GameObject camera;
 	private Collider collider;
+	private Rigidbody rigidbody;
+	#endregion
 	
 	//   S T A R T                                                                                                      
 	void Start()
 	{
 		collider = GetComponent<Collider>();
+		rigidbody = GetComponent<Rigidbody>();
 	}
 
 	public void Init()
@@ -35,6 +39,7 @@ public class Player : MonoBehaviour
 		teleportLocation = tLoc;
 		startPosition = gameObject.transform.position;
 		isMoving = true;
+		rigidbody.isKinematic = true;
 		lerpDistance = 0;
 		totalDistance = Vector3.Distance(startPosition, teleportLocation);
 	}
@@ -51,6 +56,7 @@ public class Player : MonoBehaviour
 			{
 				gameObject.transform.position = teleportLocation;
 				isMoving = false;
+				rigidbody.isKinematic = false;
 			}
 		}
 	}

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameLogic : MonoBehaviour
 {
+	#region Global_Variables
 	public Player player;
 	private ControllerInput controllerInput;
 	///public GameObject l_controller_GO;
@@ -27,6 +28,7 @@ public class GameLogic : MonoBehaviour
 	public float sceneChangingTime;
 	private float endTime;
 	private float startTime;
+	#endregion
 
 	//   S T A R T                                                                                                      
 	void Start()
@@ -45,6 +47,7 @@ public class GameLogic : MonoBehaviour
 
 		// Player
 		player.Init();
+		controllerInput.Init();
 
 		// Scene Transition
 		sceneTransition = SceneTransition.starting;
@@ -82,9 +85,6 @@ public class GameLogic : MonoBehaviour
 		if(sceneTransition == SceneTransition.starting)
 		{
 			float fraction = 1f - ((Time.time - startTime) / sceneChangingTime);
-			///Debug.Log("2. Now the time is " + Time.time);
-			///Debug.Log("2. Elapsed time: " + (Time.time - startTime));
-			///Debug.Log("2. fraction: " + fraction);
 			Color color = l_maskRend.material.color;
 			color = new Color(color.r, color.g, color.b, fraction);
 			l_maskRend.material.color = color;
