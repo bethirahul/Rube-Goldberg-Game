@@ -127,12 +127,12 @@ public class ControllerInput : MonoBehaviour
 		}
 
 		// Hand Trigger Up
-		if(OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger, r_controller))
+		/*if(OVRInput.GetUp(OVRInput.Button.PrimaryHandTrigger, r_controller))
 		{
 			Debug.Log("Hand Trigger Released");
 			if(holdingObject != null)
 				ReleaseObject();
-		}
+		}*/
 	}
 
 	// Ground Ray
@@ -162,11 +162,17 @@ public class ControllerInput : MonoBehaviour
 	public void CheckGrabInput(Collider collider)
 	{
 		Debug.Log("Controller colliding with object of tag: " + collider.transform.tag);
-		if(OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, r_controller) && collider.transform.tag == "Throwable")
+		if(OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, r_controller) &&
+		   collider.transform.tag == "Throwable" &&
+		   holdingObject == null)
 		{
-			Debug.Log("Hand Trigger Pressed down");
 			holdingObject = collider.gameObject;
 			GrabObject();
+		}
+		else if(!OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, r_controller))
+		{
+			if(holdingObject != null)
+				ReleaseObject();
 		}
 	}
 

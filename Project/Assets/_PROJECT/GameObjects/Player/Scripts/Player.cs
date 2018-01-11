@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
 	public float moveSpeed;
 
 	public GameObject camera;
-	///public GameObject r_controller_GO;
+	public GameObject r_controller_GO;
 	private Collider collider;
 	private Rigidbody rigidbody;
 	#endregion
@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
 		collider = GetComponent<Collider>();
 		rigidbody = GetComponent<Rigidbody>();
 		rigidbody.mass = 70;
-		///Physics.IgnoreCollision(collider, r_controller_GO.GetComponent<Collider>());
+		Physics.IgnoreCollision(collider, r_controller_GO.GetComponent<Collider>());
 	}
 
 	public void Init()
@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
 	public void InitTeleport(Vector3 tLoc)
 	{
 		teleportLocation = tLoc;
-		startPosition = gameObject.transform.position;
+		startPosition = rigidbody.position;
 		isMoving = true;
 		rigidbody.isKinematic = true;
 		lerpDistance = 0;
@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
 			rigidbody.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
 			if(lerpDistance >= 1)
 			{
-				gameObject.transform.position = teleportLocation;
+				rigidbody.position = teleportLocation;
 				isMoving = false;
 				rigidbody.isKinematic = false;
 			}
@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
 		Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
 		direction = direction * moveSpeed * Time.deltaTime;
 		///gameObject.transform.position = gameObject.transform.position + direction;
-		rigidbody.position = gameObject.transform.position + direction;
+		rigidbody.position += direction;
 	}
 
 	private float AngleBetween(Vector3 first, Vector3 second)
