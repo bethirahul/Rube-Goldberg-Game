@@ -30,17 +30,21 @@ public class VRButton : MonoBehaviour
 
 	public void hover()
 	{
-		Debug.Log("Ray Hit");
+		///Debug.Log("Ray Hit on Button");
 		rend.material.color = highlightColor;
 	}
 
 	public void click()
 	{
-		Debug.Log("Button clicked");
 		rend.material.color = clickColor;
+
 		if(type == buttonType.start)
-		{
 			gameLogic.startButton();
+		else
+		if(type == buttonType.exit)
+		{
+			Debug.Log("Exit Button clicked");
+			Application.Quit();
 		}
 	}
 }

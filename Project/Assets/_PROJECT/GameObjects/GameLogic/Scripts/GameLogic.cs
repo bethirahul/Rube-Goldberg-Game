@@ -6,12 +6,24 @@ using UnityEngine.SceneManagement;
 public class GameLogic : MonoBehaviour
 {
 	#region Global_Variables
+	//  Player
 	public Player player;
+	public float teleportSpeed;
+	public float moveSpeed;
+
+	//  Controllers
 	private ControllerInput controllerInput;
-	///public GameObject l_controller_GO;
-	public GameObject r_controller_GO;
+	public OVRInput.Controller L_controller;
+	public OVRInput.Controller R_controller;
+	public GameObject L_controller_GO;
+	public GameObject R_controller_GO;
+	public LayerMask rayMask;
+	public float rayRange;
+	public float throwForce;
+
+	//  Level
 	public int currentLevel;
-	public int startLevel;
+	public int nextLevel;
 
 	//  Scene Changing
 	private enum SceneTransition
@@ -21,10 +33,10 @@ public class GameLogic : MonoBehaviour
 		ending
 	};
 	private SceneTransition sceneTransition;
-	public GameObject l_mask;
-	public GameObject r_mask;
-	private Renderer l_maskRend;
-	private Renderer r_maskRend;
+	public GameObject L_mask;
+	public GameObject R_mask;
+	private Renderer L_maskRend;
+	private Renderer R_maskRend;
 	public float sceneChangingTime;
 	private float endTime;
 	private float startTime;
@@ -42,8 +54,11 @@ public class GameLogic : MonoBehaviour
 	{
 		// Components
 		controllerInput = player.gameObject.GetComponent<ControllerInput>();
-		l_maskRend = l_mask.GetComponent<Renderer>();
-		r_maskRend = r_mask.GetComponent<Renderer>();
+		L_maskRend = L_mask.GetComponent<Renderer>();
+		R_maskRend = R_mask.GetComponent<Renderer>();
+
+		Physics.IgnoreCollision(player.GetComponent<Collider>(), L_controller_GO.GetComponent<Collider>());
+		Physics.IgnoreCollision(player.GetComponent<Collider>(), R_controller_GO.GetComponent<Collider>());
 
 		// Player
 		player.Init();
@@ -57,9 +72,10 @@ public class GameLogic : MonoBehaviour
 	//  SCENE TRANSITION
 	private void InitSceneTransition()
 	{
-		l_mask.SetActive(true);
-		r_mask.SetActive(true);
-		r_controller_GO.SetActive(false);
+		L_mask.SetActive(true);
+		R_mask.SetActive(true);
+		L_controller_GO.SetActive(false);
+		R_controller_GO.SetActive(false);
 		startTime = Time.time;
 		endTime = startTime + sceneChangingTime;
 	}
@@ -85,27 +101,27 @@ public class GameLogic : MonoBehaviour
 		if(sceneTransition == SceneTransition.starting)
 		{
 			float fraction = 1f - ((Time.time - startTime) / sceneChangingTime);
-			Color color = l_maskRend.material.color;
+			Color color = L_maskRend.material.color;
 			color = new Color(color.r, color.g, color.b, fraction);
-			l_maskRend.material.color = color;
-			r_maskRend.material.color = color;
+			L_maskRend.material.color = color;
+			R_maskRend.material.color = color;
 			if(fraction <= 0f)
 			{
 				///Debug.Log("3. Scene Anim Complete");
 				sceneTransition = SceneTransition.complete;
-				l_mask.SetActive(false);
-				r_mask.SetActive(false);
-				///l_controller_GO.SetActive(true);
-				r_controller_GO.SetActive(true);
+				L_mask.SetActive(false);
+				R_mask.SetActive(false);
+				L_controller_GO.SetActive(true);
+				R_controller_GO.SetActive(true);
 			}
 		}
 		else if(sceneTransition == SceneTransition.ending)
 		{
 			float fraction = (Time.time - startTime) / sceneChangingTime;
-			Color myColor = l_maskRend.material.color;
+			Color myColor = L_maskRend.material.color;
 			myColor = new Color(myColor.r, myColor.g, myColor.b, fraction);
-			l_maskRend.material.color = myColor;
-			r_maskRend.material.color = myColor;
+			L_maskRend.material.color = myColor;
+			R_maskRend.material.color = myColor;
 			if(fraction >= 1f)
 				SceneManager.LoadScene("Level" + currentLevel);
 		}
@@ -122,7 +138,7 @@ public class GameLogic : MonoBehaviour
 	public void startButton()
 	{
 		Debug.Log("Start Button pressed!");
-		currentLevel = startLevel;
+		currentLevel = nextLevel;
 		sceneTransition = SceneTransition.ending;
 		InitSceneTransition();
 		///SceneManager.LoadScene("level" + currentLevel);
@@ -139,6 +155,12 @@ public class GameLogic : MonoBehaviour
 	{
 		if(sceneTransition == SceneTransition.complete)
 			player.Teleport();
+	}
+
+	public void MovePlayer(Vector2 joystickInput)
+	{
+		if(sceneTransition == SceneTransition.complete && currentLevel != 0)
+			player.Move(joystickInput);
 	}
 
 	// MOVE GAME OBJECTS

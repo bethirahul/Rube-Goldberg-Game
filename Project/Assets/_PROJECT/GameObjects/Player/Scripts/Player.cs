@@ -9,27 +9,27 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour
 {
 	#region Global_Variables
+	public GameLogic GL;
+
+	//  Teleport
 	private bool isMoving;
 	private Vector3 teleportLocation;
-	public float teleportSpeed;
 	private Vector3 startPosition;
 	private float lerpDistance;
 	private float totalDistance;
-	public float moveSpeed;
 
+	//  Scene Transition
 	public GameObject camera;
-	public GameObject r_controller_GO;
-	private Collider collider;
+
+	//  RigidBody
 	private Rigidbody rigidbody;
 	#endregion
 	
 	//   S T A R T                                                                                                      
 	void Start()
 	{
-		collider = GetComponent<Collider>();
 		rigidbody = GetComponent<Rigidbody>();
 		rigidbody.mass = 70;
-		Physics.IgnoreCollision(collider, r_controller_GO.GetComponent<Collider>());
 	}
 
 	public void Init()
@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
 	{
 		if(isMoving)
 		{
-			lerpDistance = lerpDistance + ((Time.deltaTime * teleportSpeed) / totalDistance);
+			lerpDistance = lerpDistance + ((Time.deltaTime * GL.teleportSpeed) / totalDistance);
 			rigidbody.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
 			if(lerpDistance >= 1)
 			{
@@ -76,7 +76,7 @@ public class Player : MonoBehaviour
 		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
 		Vector3 direction = camera.transform.TransformDirection(joystickDirection);
 		direction = new Vector3(direction.x, 0, direction.z);
-		direction = direction * moveSpeed * Time.deltaTime;
+		direction = direction * GL.moveSpeed * Time.deltaTime;
 		///rigidbody.position += direction;
 		transform.position += direction;
 	}

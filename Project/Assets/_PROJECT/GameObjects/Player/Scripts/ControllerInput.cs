@@ -6,43 +6,35 @@ using UnityEngine.iOS;
 public class ControllerInput : MonoBehaviour
 {
 	#region Global_Variables
-	public GameLogic gameLogic;
-	public Player player;
-
-	//  OCULUS
-	///public OVRInput.Controller l_controller;
-	public OVRInput.Controller r_controller;
-	///public GameObject l_controller_GO;
-	public GameObject r_controller_GO;
-
-	//  RAY CASTING
-	///public LineRenderer l_ray;
-	public LineRenderer r_ray;
-	public LayerMask rayMask;
-	public float rayRange;
+	public GameLogic GL;
+	private Player player;
 
 	//  HOLDING
-	private bool isMenuOpen;
-	private GameObject holdingObject;
-	public float throwForce;
+	public bool isMenuOpen;
+	/*private GameObject L_holdingObject;
+	private GameObject R_holdingObject;*/
 
 	//  TELEPORT
 	public GameObject teleportLocation_GO;
+	public LineRenderer ray;
 	#endregion
 
 	//   S T A R T                                                                                                      
 	void Start()
 	{
-		///l_ray.gameObject.SetActive(false);
-		r_ray.gameObject.SetActive(false);
+		
+		ray.gameObject.SetActive(false);
 		player = GetComponent<Player>();
 	}
 
 	// Init
 	public void Init()
 	{
+		GL.L_controller_GO.GetComponent<ControllerCollision>().Init();
+		GL.R_controller_GO.GetComponent<ControllerCollision>().Init();
 		isMenuOpen = false;
-		holdingObject = null;
+		/*L_holdingObject = null;
+		R_holdingObject = null;*/
 	}
 	
 	//   U P D A T E                                                                                                    
@@ -51,21 +43,21 @@ public class ControllerInput : MonoBehaviour
 	public void CheckInput()
 	{
 		// B Button Press
-		if(OVRInput.Get(OVRInput.Button.Two, r_controller))
+		if(OVRInput.Get(OVRInput.Button.Two, GL.R_controller))
 		{
-			r_ray.gameObject.SetActive(true);
-			r_ray.SetPosition(0, r_controller_GO.transform.position);
+			ray.gameObject.SetActive(true);
+			ray.SetPosition(0, GL.R_controller_GO.transform.position);
 
 			RaycastHit hit;
-			if(Physics.Raycast(r_controller_GO.transform.position,
-			                   r_controller_GO.transform.forward, out hit, rayRange, rayMask))
+			if(Physics.Raycast(GL.R_controller_GO.transform.position,
+			                   GL.R_controller_GO.transform.forward, out hit, GL.rayRange, GL.rayMask))
 			{
-				r_ray.SetPosition(1, hit.point);
+				ray.SetPosition(1, hit.point);
 
 				if(hit.transform.tag == "Button")
 					hit.collider.gameObject.GetComponent<VRButton>().hover();
-				else
-				if(hit.transform.tag == "Ground")
+
+				else if(hit.transform.tag == "Ground")
 				{
 					teleportLocation_GO.transform.position = hit.point;
 					teleportLocation_GO.SetActive(true);
@@ -75,51 +67,51 @@ public class ControllerInput : MonoBehaviour
 			}
 			else
 			{
-				Vector3 rayEndPoint = (r_controller_GO.transform.forward * rayRange) +
-				                      r_controller_GO.transform.position;
-				r_ray.SetPosition(1, rayEndPoint);
+				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
+									  GL.R_controller_GO.transform.position;
+				ray.SetPosition(1, rayEndPoint);
 
 				GroundRay(rayEndPoint, true);
 			}
 		}
 
 		// B Button Up
-		if(OVRInput.GetUp(OVRInput.Button.Two, r_controller))
+		if(OVRInput.GetUp(OVRInput.Button.Two, GL.R_controller))
 		{
 			Debug.Log("B button released");
-			r_ray.gameObject.SetActive(false);
+			ray.gameObject.SetActive(false);
 			teleportLocation_GO.SetActive(false);
 
 			RaycastHit hit;
-			if(Physics.Raycast(r_controller_GO.transform.position,
-			                   r_controller_GO.transform.forward, out hit, rayRange, rayMask))
+			if(Physics.Raycast(GL.R_controller_GO.transform.position,
+			                   GL.R_controller_GO.transform.forward, out hit, GL.rayRange, GL.rayMask))
 			{
 				if(hit.transform.tag == "Button")
 					hit.collider.gameObject.GetComponent<VRButton>().click();
 				else
 				if(hit.transform.tag == "Ground")
 				{
-					gameLogic.InitTeleportPlayer(hit.point);
+					GL.InitTeleportPlayer(hit.point);
 				}
 				else
 					GroundRay(hit.point, false);
 			}
 			else
 			{
-				Vector3 rayEndPoint = (r_controller_GO.transform.forward * rayRange) +
-				                      r_controller_GO.transform.position;
-				r_ray.SetPosition(1, rayEndPoint);
+				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
+									  GL.R_controller_GO.transform.position;
+				ray.SetPosition(1, rayEndPoint);
 
 				GroundRay(rayEndPoint, false);
 			}
 		}
 
 		// Joystick
-		Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, r_controller);
+		Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, GL.R_controller);
 		if(joystickInput != Vector2.zero)
 		{
 			if(!isMenuOpen)
-				player.Move(joystickInput);
+				GL.MovePlayer(joystickInput);
 			else
 			{
 				
@@ -139,7 +131,7 @@ public class ControllerInput : MonoBehaviour
 	private void GroundRay(Vector3 startPoint, bool isButtonPress)
 	{
 		RaycastHit groundHit;
-		if(Physics.Raycast(startPoint, -Vector3.up, out groundHit, rayRange, rayMask))
+		if(Physics.Raycast(startPoint, -Vector3.up, out groundHit, GL.rayRange, GL.rayMask))
 		{
 			if(isButtonPress)
 			{
@@ -147,39 +139,52 @@ public class ControllerInput : MonoBehaviour
 				teleportLocation_GO.SetActive(true);
 			}
 			else
-				gameLogic.InitTeleportPlayer(groundHit.point);
+				GL.InitTeleportPlayer(groundHit.point);
 		}
 		else
 		{
 			if(isButtonPress)
 				teleportLocation_GO.SetActive(false);
 			Debug.Log("Ground Ray didn't hit ground: Cannot Teleport!");
-			Debug.Log("First Ray end: " + startPoint);
+			///Debug.Log("First Ray end: " + startPoint);
 		}
 	}
 
 	// HOLDING
-	public void CheckGrabInput(Collider collider)
+	/*public void CheckGrabInput(Collider collider, GameObject controller_GO)
 	{
-		Debug.Log("Controller colliding with object of tag: " + collider.transform.tag);
-		if(OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, r_controller) &&
+		OVRInput.Controller controller;
+		GameObject holdingObject;
+		if(controller_GO == GL.L_controller_GO)
+		{
+			controller = GL.L_controller;
+			holdingObject = L_holdingObject;
+			Debug.Log("Left Controller colliding with object of tag: " + collider.transform.tag);
+		}
+		else
+		{
+			controller = GL.R_controller;
+			holdingObject = R_holdingObject;
+			Debug.Log("Right Controller colliding with object of tag: " + collider.transform.tag);
+		}
+
+		if(OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, controller) &&
 		   collider.transform.tag == "Throwable" &&
 		   holdingObject == null)
 		{
 			holdingObject = collider.gameObject;
-			GrabObject();
+			GrabObject(controller);
 		}
-		else if(!OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, r_controller))
+		else if(!OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, controller) && holdingObject != null)
 		{
-			if(holdingObject != null)
-				ReleaseObject();
+			ReleaseObject(controller);
 		}
 	}
 
 	// Grab
 	private void GrabObject()
 	{
-		holdingObject.transform.SetParent(r_controller_GO.transform);
+		holdingObject.transform.SetParent(GL.R_controller_GO.transform);
 		holdingObject.GetComponent<Rigidbody>().isKinematic = true;
 		Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>());
 		Debug.Log("Holding object");
@@ -193,10 +198,10 @@ public class ControllerInput : MonoBehaviour
 		rigidbody.isKinematic = false;
 		Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
 		rigidbody.velocity =
-						transform.TransformDirection(OVRInput.GetLocalControllerVelocity(r_controller)) * throwForce;
+						transform.TransformDirection(OVRInput.GetLocalControllerVelocity(GL.R_controller)) * throwForce;
 		rigidbody.angularVelocity =
-						transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(r_controller));
+						transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(GL.R_controller));
 		holdingObject = null;
 		Debug.Log("Object Released with velocity: " + rigidbody.velocity + ", angular: " + rigidbody.angularVelocity);
-	}
+	}*/
 }
