@@ -72,7 +72,11 @@ public class Player : MonoBehaviour
 		Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
 		direction = direction * moveSpeed * Time.deltaTime;
 		rigidbody.position += direction;*/
-
+		if(isMoving)
+		{
+			isMoving = false;
+			rigidbody.isKinematic = false;
+		}
 		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
 		Vector3 direction = camera.transform.TransformDirection(joystickDirection);
 		direction = new Vector3(direction.x, 0, direction.z);

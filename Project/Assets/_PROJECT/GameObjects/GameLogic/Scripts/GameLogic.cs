@@ -20,6 +20,7 @@ public class GameLogic : MonoBehaviour
 	public LayerMask rayMask;
 	public float rayRange;
 	public float throwForce;
+	public int lastFrametoCalcMotion;
 
 	//  Level
 	public int currentLevel;
