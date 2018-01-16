@@ -10,6 +10,7 @@ public class GameLogic : MonoBehaviour
 	public Player player;
 	public float teleportSpeed;
 	public float moveSpeed;
+	public float playerWeight;
 
 	//  Controllers
 	private ControllerInput controllerInput;
@@ -21,17 +22,19 @@ public class GameLogic : MonoBehaviour
 	public float rayRange;
 	public float throwForce;
 	public int lastFrametoCalcMotion;
+	public GameObject teleportLocation_GO;
 
 	//  Level
 	public int currentLevel;
-	public int nextLevel;
+	///public static int nextLevel;
 
 	//  Scene Changing
 	private enum SceneTransition
 	{
 		starting,
 		complete,
-		ending
+		ending,
+		exit
 	};
 	private SceneTransition sceneTransition;
 	public GameObject L_mask;
@@ -41,17 +44,27 @@ public class GameLogic : MonoBehaviour
 	public float sceneChangingTime;
 	private float endTime;
 	private float startTime;
+
+	//  Buttons
+	public VRButton mm_start_btn;
+	public VRButton mm_exit_btn;
+	public VRButton mm_switch_btn;
 	#endregion
+
+	//   A W A K E                                                                                                      
+	void Awake()
+	{
+		DontDestroyOnLoad(transform.gameObject);
+	}
 
 	//   S T A R T                                                                                                      
 	void Start()
 	{
-		InitForAllLevels();
-		InitFromLevel1();
+		InitLevel();
 	}
 
-	//  INIT for ALL LEVELS
-	private void InitForAllLevels()
+	//  INIT LEVEL
+	private void InitLevel()
 	{
 		// Components
 		controllerInput = player.gameObject.GetComponent<ControllerInput>();
@@ -66,25 +79,26 @@ public class GameLogic : MonoBehaviour
 		controllerInput.Init();
 
 		// Scene Transition
-		sceneTransition = SceneTransition.starting;
-		InitSceneTransition();
+		InitSceneTransition(SceneTransition.starting);
+		teleportLocation_GO.SetActive(false);
+	}
+
+	public void TeleportLocation_GO_SetActive(bool state)
+	{
+		if(currentLevel != 0)
+			teleportLocation_GO.SetActive(state);
 	}
 
 	//  SCENE TRANSITION
-	private void InitSceneTransition()
+	private void InitSceneTransition(SceneTransition sceneTrans)
 	{
+		sceneTransition = sceneTrans;
 		L_mask.SetActive(true);
 		R_mask.SetActive(true);
 		L_controller_GO.SetActive(false);
 		R_controller_GO.SetActive(false);
 		startTime = Time.time;
 		endTime = startTime + sceneChangingTime;
-	}
-
-	//  INIT from LEVEL 1
-	private void InitFromLevel1()
-	{
-		
 	}
 
 	//   U P D A T E                                                                                                    
@@ -108,7 +122,6 @@ public class GameLogic : MonoBehaviour
 			R_maskRend.material.color = color;
 			if(fraction <= 0f)
 			{
-				///Debug.Log("3. Scene Anim Complete");
 				sceneTransition = SceneTransition.complete;
 				L_mask.SetActive(false);
 				R_mask.SetActive(false);
@@ -116,7 +129,7 @@ public class GameLogic : MonoBehaviour
 				R_controller_GO.SetActive(true);
 			}
 		}
-		else if(sceneTransition == SceneTransition.ending)
+		else if(sceneTransition == SceneTransition.ending || sceneTransition == SceneTransition.exit)
 		{
 			float fraction = (Time.time - startTime) / sceneChangingTime;
 			Color myColor = L_maskRend.material.color;
@@ -124,7 +137,18 @@ public class GameLogic : MonoBehaviour
 			L_maskRend.material.color = myColor;
 			R_maskRend.material.color = myColor;
 			if(fraction >= 1f)
+			{
+				if(sceneTransition == SceneTransition.exit)
+				{
+					Debug.Log("Application Exit");
+					Application.Quit();
+					Debug.Log("Application Exit executed in editor");
+					return;
+				}
+				currentLevel++;
 				SceneManager.LoadScene("Level" + currentLevel);
+				InitLevel();
+			}
 		}
 	}
 
@@ -136,13 +160,42 @@ public class GameLogic : MonoBehaviour
 	}
 
 	//  BUTTONS
-	public void startButton()
+	public void StartButton()
 	{
 		Debug.Log("Start Button pressed!");
-		currentLevel = nextLevel;
-		sceneTransition = SceneTransition.ending;
-		InitSceneTransition();
-		///SceneManager.LoadScene("level" + currentLevel);
+		///currentLevel = nextLevel;
+		InitSceneTransition(SceneTransition.ending);
+	}
+
+	public void ExitButton()
+	{
+		Debug.Log("Exit Button pressed!");
+		InitSceneTransition(SceneTransition.exit);
+	}
+
+	public void SwitchControllersButton()
+	{
+		Debug.Log("Switch Controllers Button pressed!");
+
+		OVRInput.Controller temp_controller;
+		temp_controller = L_controller;
+		L_controller    = R_controller;
+		R_controller    = temp_controller;
+
+		GameObject temp_controller_GO;
+		temp_controller_GO = L_controller_GO;
+		L_controller_GO    = R_controller_GO;
+		R_controller_GO    = temp_controller_GO;
+	}
+
+	public void ResetAllButtons()
+	{
+		if(currentLevel == 0)
+		{
+			mm_start_btn.Init();
+			mm_exit_btn.Init();
+			mm_switch_btn.Init();
+		}
 	}
 
 	//  TELEPORT PLAYER

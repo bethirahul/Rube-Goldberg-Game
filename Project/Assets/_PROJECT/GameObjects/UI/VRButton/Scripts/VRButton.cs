@@ -15,36 +15,43 @@ public class VRButton : MonoBehaviour
 		start,
 		restartLevel,
 		restart,
-		exit
+		exit,
+		switchControllers
 	};
 	public buttonType type;
 
-	public GameLogic gameLogic;
+	public GameLogic GL;
 
-	// Use this for initialization
+	//   S T A R T                                                                                                      
 	void Start()
 	{
 		rend = GetComponent<Renderer>();
+		Init();
+	}
+
+	public void Init()
+	{
 		rend.material.color = normalColor;
 	}
 
-	public void hover()
+	public void Hover()
 	{
 		///Debug.Log("Ray Hit on Button");
 		rend.material.color = highlightColor;
 	}
 
-	public void click()
+	public void Click()
 	{
 		rend.material.color = clickColor;
 
 		if(type == buttonType.start)
-			gameLogic.startButton();
-		else
-		if(type == buttonType.exit)
+			GL.StartButton();
+		else if(type == buttonType.exit)
+			GL.ExitButton();
+		else if(type == buttonType.switchControllers)
 		{
-			Debug.Log("Exit Button clicked");
-			Application.Quit();
+			GL.SwitchControllersButton();
+			Invoke("Init", 0.125f);
 		}
 	}
 }

@@ -9,7 +9,6 @@ public class ControllerCollision : MonoBehaviour
 	public Player player;
 
 	private OVRInput.Controller controller;
-	///private GameObject otherController_GO;
 
 	private Vector3[] lastPosition;
 	private float[] timeStamp;
@@ -24,15 +23,16 @@ public class ControllerCollision : MonoBehaviour
 
 	//  Debug
 	private string controller_name;
-	///public ControllerInput controllerInput;
 	#endregion
 
-	void Start()
+	//   S T A R T                                                                                                      
+	void Awake()
 	{
 		lastPosition = new Vector3[GL.lastFrametoCalcMotion];
 		timeStamp    = new float[GL.lastFrametoCalcMotion];
 	}
 
+	// INIT
 	public void Init()
 	{
 		GetController();
@@ -53,14 +53,12 @@ public class ControllerCollision : MonoBehaviour
 		if(gameObject == GL.L_controller_GO)
 		{
 			controller = GL.L_controller;
-			///otherController_GO = GL.R_controller_GO;
 			controller_name = "Left"; /// Debug
 		}
 		//  Right
 		else
 		{
 			controller = GL.R_controller;
-			///otherController_GO = GL.L_controller_GO;
 			controller_name = "Right"; /// Debug
 		}
 	}
@@ -74,7 +72,6 @@ public class ControllerCollision : MonoBehaviour
 		if(OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, controller))
 		{
 			Debug.Log(Time.time + ": Hand Trigger is being Pressed");
-			///Gizmos.DrawLine(gameObject.transform.position, 1);
 			handTriggerPressed = true;
 			if(collisionHappenedFirst && holdingObject == null)
 			{
@@ -92,15 +89,13 @@ public class ControllerCollision : MonoBehaviour
 		else
 		{
 			if(handTriggerPressed)
-			{
 				Debug.Log(Time.time + ": Trigger Released");
-				///Debug.DrawRay(gameObject.transform.position, gameObject.transform.forward*50, Color.blue, 30, true);
-			}
 			handTriggerPressed = false;
 			ReleaseObject();
 		}
 	}
 
+	//  Last Position
 	private void UpdateLastPosition()
 	{
 		for(int i = lastPosition.Length-1; i >= 1; i--)
@@ -113,6 +108,7 @@ public class ControllerCollision : MonoBehaviour
 		timeStamp[0]    = Time.time;
 	}
 
+	//  Collision Enter
 	void OnTriggerEnter(Collider collider)
 
 	{
@@ -129,11 +125,7 @@ public class ControllerCollision : MonoBehaviour
 		}
 	}
 
-	/*void OnTriggerStay(Collider collider)
-	{
-		Debug.Log(Time.time + ": Is colliding with " + collider.gameObject.tag + " object");
-	}*/
-
+	//  Collision Exit
 	void OnTriggerExit(Collider collider)
 	{
 		Debug.Log(Time.time + ": Stopped colliding with " + collider.gameObject.tag + " object");
@@ -141,17 +133,10 @@ public class ControllerCollision : MonoBehaviour
 		{
 			colliding = false;
 			collisionHappenedFirst = false;
-			/*if(collider.gameObject == holdingObject)
-			{
-				///holdingObject.transform.SetParent(null);
-				///holdingObject_rigidbody.isKinematic = false;
-				Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
-				holdingObject = null;
-				holdingObject_rigidbody = null;
-			}*/
 		}
 	}
 
+	//  Release
 	private void ReleaseObject()
 	{
 		if(holdingObject != null)
@@ -159,15 +144,9 @@ public class ControllerCollision : MonoBehaviour
 			holdingObject.transform.SetParent(null);
 			holdingObject_rigidbody.isKinematic = false;
 			Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(), player.GetComponent<Collider>(), false);
-			/*Vector3 a = transform.TransformPoint(lastPosition[lastPosition.Length-1]);
-			Vector3 b = transform.TransformPoint(lastPosition[0]);*/
 			Vector3 a = lastPosition[lastPosition.Length-1];
 			Vector3 b = lastPosition[0];
 			float timeTaken = timeStamp[0] - timeStamp[timeStamp.Length-1];
-			/*float distance  = Vector3.Distance(A, B);
-			float timeTaken = timeStamp[0] - timeStamp[timeStamp.Length-1];
-			float velocity = distance / timeTaken;
-			float direction = (lastPosition[0] - lastPosition[lastPosition.Length-1])/distance;*/
 			holdingObject_rigidbody.velocity = ((b - a) * GL.throwForce) / timeTaken;
 
 			///holdingObject_rigidbody.velocity =
@@ -175,9 +154,6 @@ public class ControllerCollision : MonoBehaviour
 
 			holdingObject_rigidbody.angularVelocity =
 						transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(controller));
-
-			Debug.Log(Time.time + ": Object Released with velocity: " + holdingObject_rigidbody.velocity +
-				", angular: " + holdingObject_rigidbody.angularVelocity);
 			holdingObject = null;
 			holdingObject_rigidbody = null;
 		}

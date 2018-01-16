@@ -22,14 +22,13 @@ public class ControllerInput : MonoBehaviour
 	//   S T A R T                                                                                                      
 	void Start()
 	{
-		
-		ray.gameObject.SetActive(false);
 		player = GetComponent<Player>();
 	}
 
 	// Init
 	public void Init()
 	{
+		ray.gameObject.SetActive(false);
 		GL.L_controller_GO.GetComponent<ControllerCollision>().Init();
 		GL.R_controller_GO.GetComponent<ControllerCollision>().Init();
 		isMenuOpen = false;
@@ -54,19 +53,23 @@ public class ControllerInput : MonoBehaviour
 			{
 				ray.SetPosition(1, hit.point);
 
+				if(hit.transform.tag != "Button")
+					GL.ResetAllButtons();
+
 				if(hit.transform.tag == "Button")
-					hit.collider.gameObject.GetComponent<VRButton>().hover();
+					hit.collider.gameObject.GetComponent<VRButton>().Hover();
 
 				else if(hit.transform.tag == "Ground")
 				{
 					teleportLocation_GO.transform.position = hit.point;
-					teleportLocation_GO.SetActive(true);
+					GL.TeleportLocation_GO_SetActive(true);
 				}
 				else
 					GroundRay(hit.point, true);
 			}
 			else
 			{
+				GL.ResetAllButtons();
 				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
 									  GL.R_controller_GO.transform.position;
 				ray.SetPosition(1, rayEndPoint);
@@ -80,24 +83,27 @@ public class ControllerInput : MonoBehaviour
 		{
 			Debug.Log("B button released");
 			ray.gameObject.SetActive(false);
-			teleportLocation_GO.SetActive(false);
+			GL.TeleportLocation_GO_SetActive(false);
 
 			RaycastHit hit;
 			if(Physics.Raycast(GL.R_controller_GO.transform.position,
 			                   GL.R_controller_GO.transform.forward, out hit, GL.rayRange, GL.rayMask))
 			{
+				if(hit.transform.tag != "Button")
+					GL.ResetAllButtons();
+
 				if(hit.transform.tag == "Button")
-					hit.collider.gameObject.GetComponent<VRButton>().click();
-				else
-				if(hit.transform.tag == "Ground")
-				{
+					hit.collider.gameObject.GetComponent<VRButton>().Click();
+
+				else if(hit.transform.tag == "Ground")
 					GL.InitTeleportPlayer(hit.point);
-				}
+
 				else
 					GroundRay(hit.point, false);
 			}
 			else
 			{
+				GL.ResetAllButtons();
 				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
 									  GL.R_controller_GO.transform.position;
 				ray.SetPosition(1, rayEndPoint);
@@ -136,7 +142,7 @@ public class ControllerInput : MonoBehaviour
 			if(isButtonPress)
 			{
 				teleportLocation_GO.transform.position = groundHit.point;
-				teleportLocation_GO.SetActive(true);
+				GL.TeleportLocation_GO_SetActive(true);
 			}
 			else
 				GL.InitTeleportPlayer(groundHit.point);
@@ -144,7 +150,7 @@ public class ControllerInput : MonoBehaviour
 		else
 		{
 			if(isButtonPress)
-				teleportLocation_GO.SetActive(false);
+				GL.TeleportLocation_GO_SetActive(false);
 			Debug.Log("Ground Ray didn't hit ground: Cannot Teleport!");
 			///Debug.Log("First Ray end: " + startPoint);
 		}
