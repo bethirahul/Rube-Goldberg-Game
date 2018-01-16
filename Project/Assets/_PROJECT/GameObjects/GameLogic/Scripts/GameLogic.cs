@@ -45,10 +45,12 @@ public class GameLogic : MonoBehaviour
 	private float endTime;
 	private float startTime;
 
-	//  Buttons
+	//  UI
 	public VRButton mm_start_btn;
 	public VRButton mm_exit_btn;
 	public VRButton mm_switch_btn;
+	public GameObject A_info;
+	public GameObject B_info;
 	#endregion
 
 	//   A W A K E                                                                                                      
@@ -179,13 +181,24 @@ public class GameLogic : MonoBehaviour
 
 		OVRInput.Controller temp_controller;
 		temp_controller = L_controller;
-		L_controller    = R_controller;
-		R_controller    = temp_controller;
+		L_controller = R_controller;
+		R_controller = temp_controller;
 
 		GameObject temp_controller_GO;
 		temp_controller_GO = L_controller_GO;
-		L_controller_GO    = R_controller_GO;
-		R_controller_GO    = temp_controller_GO;
+		L_controller_GO = R_controller_GO;
+		R_controller_GO = temp_controller_GO;
+
+		if(A_info.activeSelf)
+		{
+			A_info.SetActive(false);
+			B_info.SetActive(true);
+		}
+		else
+		{
+			A_info.SetActive(true);
+			B_info.SetActive(false);
+		}
 	}
 
 	public void ResetAllButtons()
