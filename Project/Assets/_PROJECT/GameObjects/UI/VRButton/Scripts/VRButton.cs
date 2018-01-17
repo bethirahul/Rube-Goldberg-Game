@@ -14,7 +14,6 @@ public class VRButton : MonoBehaviour
 	{
 		start,
 		restartLevel,
-		restart,
 		exit,
 		switchControllers
 	};
@@ -53,5 +52,7 @@ public class VRButton : MonoBehaviour
 			GL.SwitchControllersButton();
 			Invoke("Init", 0.125f);
 		}
+		else if(type == buttonType.restartLevel)
+			GL.RestartLevelButton();
 	}
 }

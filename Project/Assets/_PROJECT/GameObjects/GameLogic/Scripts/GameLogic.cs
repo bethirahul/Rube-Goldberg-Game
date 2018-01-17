@@ -62,10 +62,12 @@ public class GameLogic : MonoBehaviour
 	public VRButton mm_exit_btn;
 	public VRButton exit_btn;
 	public VRButton switch_btn;
+	public VRButton restartLevel_btn;
 	public GameObject A_info;
 	public GameObject B_info;
 	public GameObject howToWinInfo;
 	public GameObject controllerInfo;
+	public GameObject restartMenu;
 	public positionStruct controllerInfo_startPosition;
 	public positionStruct howToWinInfo_startPosition;
 	#endregion
@@ -103,6 +105,8 @@ public class GameLogic : MonoBehaviour
 		teleportLocation_GO.SetActive(false);
 		if(currentLevel != 0)
 		{
+			restartMenu.SetActive(true);
+
 			ball_GO.SetActive(true);
 			ball_GO.transform.position = ball_startPosition[currentLevel-1];
 
@@ -234,12 +238,24 @@ public class GameLogic : MonoBehaviour
 		}
 	}
 
+	public void RestartLevelButton()
+	{
+		Debug.Log("Restart Level Button pressed!");
+		currentLevel--;
+		InitSceneTransition(SceneTransition.ending);
+	}
+
 	public void ResetAllButtons()
 	{
 		if(currentLevel == 0)
 		{
 			start_btn.Init();
 			mm_exit_btn.Init();
+		}
+		else
+		{
+			exit_btn.Init();
+			restartLevel_btn.Init();
 		}
 		switch_btn.Init();
 	}
