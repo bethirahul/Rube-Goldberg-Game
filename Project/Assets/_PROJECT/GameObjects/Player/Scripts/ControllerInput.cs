@@ -57,7 +57,10 @@ public class ControllerInput : MonoBehaviour
 					GL.ResetAllButtons();
 
 				if(hit.transform.tag == "Button")
+				{
+					GL.TeleportLocation_GO_SetActive(false);
 					hit.collider.gameObject.GetComponent<VRButton>().Hover();
+				}
 
 				else if(hit.transform.tag == "Ground")
 				{

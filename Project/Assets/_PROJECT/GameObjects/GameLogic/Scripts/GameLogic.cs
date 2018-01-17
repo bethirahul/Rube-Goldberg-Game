@@ -58,11 +58,16 @@ public class GameLogic : MonoBehaviour
 	private float startTime;
 
 	//  UI
-	public VRButton mm_start_btn;
+	public VRButton start_btn;
 	public VRButton mm_exit_btn;
-	public VRButton mm_switch_btn;
+	public VRButton exit_btn;
+	public VRButton switch_btn;
 	public GameObject A_info;
 	public GameObject B_info;
+	public GameObject howToWinInfo;
+	public GameObject controllerInfo;
+	public positionStruct controllerInfo_startPosition;
+	public positionStruct howToWinInfo_startPosition;
 	#endregion
 
 	/*//   A W A K E                                                                                                      
@@ -100,8 +105,14 @@ public class GameLogic : MonoBehaviour
 		{
 			ball_GO.SetActive(true);
 			ball_GO.transform.position = ball_startPosition[currentLevel-1];
+
 			player.transform.position = player_startPosition[currentLevel-1].position;
 			player.transform.rotation = Quaternion.Euler(player_startPosition[currentLevel-1].rotation);
+									   
+			controllerInfo.transform.position = controllerInfo_startPosition.position;
+			controllerInfo.transform.rotation = Quaternion.Euler(controllerInfo_startPosition.rotation);
+			howToWinInfo.transform.position   = howToWinInfo_startPosition.position;
+			howToWinInfo.transform.rotation   = Quaternion.Euler(howToWinInfo_startPosition.rotation);
 		}
 	}
 
@@ -227,10 +238,10 @@ public class GameLogic : MonoBehaviour
 	{
 		if(currentLevel == 0)
 		{
-			mm_start_btn.Init();
+			start_btn.Init();
 			mm_exit_btn.Init();
-			mm_switch_btn.Init();
 		}
+		switch_btn.Init();
 	}
 
 	//  TELEPORT PLAYER
