@@ -58,6 +58,11 @@ public class OvrAvatarSDKManager : MonoBehaviour {
         assetCache = new Dictionary<ulong, OvrAvatarAsset>();
     }
 
+    void Awake()
+	{
+		DontDestroyOnLoad(transform.gameObject);
+	}
+
     void OnDestroy()
     {
         CAPI.ovrAvatar_Shutdown();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameLogic : MonoBehaviour
 {
@@ -10,7 +11,18 @@ public class GameLogic : MonoBehaviour
 	public Player player;
 	public float teleportSpeed;
 	public float moveSpeed;
-	public float playerWeight;
+	public float player_weight;
+	[System.Serializable]
+	public struct positionStruct
+	{
+		public Vector3 position;
+		public Vector3 rotation;
+	};
+	public positionStruct[] player_startPosition;
+
+	//  Ball
+	public GameObject ball_GO;
+	public Vector3[] ball_startPosition;
 
 	//  Controllers
 	private ControllerInput controllerInput;
@@ -53,11 +65,11 @@ public class GameLogic : MonoBehaviour
 	public GameObject B_info;
 	#endregion
 
-	//   A W A K E                                                                                                      
+	/*//   A W A K E                                                                                                      
 	void Awake()
 	{
 		DontDestroyOnLoad(transform.gameObject);
-	}
+	}*/
 
 	//   S T A R T                                                                                                      
 	void Start()
@@ -75,6 +87,7 @@ public class GameLogic : MonoBehaviour
 
 		Physics.IgnoreCollision(player.GetComponent<Collider>(), L_controller_GO.GetComponent<Collider>());
 		Physics.IgnoreCollision(player.GetComponent<Collider>(), R_controller_GO.GetComponent<Collider>());
+		Physics.IgnoreCollision(player.GetComponent<Collider>(), ball_GO.GetComponent<Collider>());
 
 		// Player
 		player.Init();
@@ -83,6 +96,13 @@ public class GameLogic : MonoBehaviour
 		// Scene Transition
 		InitSceneTransition(SceneTransition.starting);
 		teleportLocation_GO.SetActive(false);
+		if(currentLevel != 0)
+		{
+			ball_GO.SetActive(true);
+			ball_GO.transform.position = ball_startPosition[currentLevel-1];
+			player.transform.position = player_startPosition[currentLevel-1].position;
+			player.transform.rotation = Quaternion.Euler(player_startPosition[currentLevel-1].rotation);
+		}
 	}
 
 	public void TeleportLocation_GO_SetActive(bool state)
@@ -109,7 +129,6 @@ public class GameLogic : MonoBehaviour
 		CheckSceneTransition();
 		CheckInput();
 		TeleportPlayer();
-		MoveGameObjects();
 	}
 
 	//  SCENE TRANSITION
@@ -179,6 +198,9 @@ public class GameLogic : MonoBehaviour
 	{
 		Debug.Log("Switch Controllers Button pressed!");
 
+		L_controller_GO.GetComponent<ControllerCollision>().ReleaseObject();
+		R_controller_GO.GetComponent<ControllerCollision>().ReleaseObject();
+
 		OVRInput.Controller temp_controller;
 		temp_controller = L_controller;
 		L_controller = R_controller;
@@ -230,9 +252,16 @@ public class GameLogic : MonoBehaviour
 			player.Move(joystickInput);
 	}
 
-	// MOVE GAME OBJECTS
-	private void MoveGameObjects()
+	//  BALL
+	public void BallTouchedGround()
 	{
-		
+		Debug.Log("Ball touched ground");
+		ball_GO.transform.position = ball_startPosition[currentLevel-1];
+	}
+
+	public void BallTouchedFinish()
+	{
+		Debug.Log("Ball touched Finish");
+		///Check for finish condition
 	}
 }

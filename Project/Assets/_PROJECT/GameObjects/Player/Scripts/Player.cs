@@ -26,16 +26,16 @@ public class Player : MonoBehaviour
 	#endregion
 	
 	//   S T A R T                                                                                                      
-	void Awake()
+	/*void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody>();
 		DontDestroyOnLoad(transform.gameObject);
-	}
+	}*/
 
 	public void Init()
 	{
 		isMoving       = false;
-		rigidbody.mass = GL.playerWeight;
+		rigidbody.mass = GL.player_weight;
 	}
 
 	public void InitTeleport(Vector3 tLoc)
