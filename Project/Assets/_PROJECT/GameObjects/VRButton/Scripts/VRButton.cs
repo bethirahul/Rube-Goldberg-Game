@@ -22,14 +22,10 @@ public class VRButton : MonoBehaviour
 	public GameLogic GL;
 
 	//   S T A R T                                                                                                      
-	void Start()
-	{
-		rend = GetComponent<Renderer>();
-		Init();
-	}
-
 	public void Init()
 	{
+		if(rend == null)
+			rend = GetComponent<Renderer>();
 		rend.material.color = normalColor;
 	}
 

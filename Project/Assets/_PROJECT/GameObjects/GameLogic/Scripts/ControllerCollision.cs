@@ -71,7 +71,7 @@ public class ControllerCollision : MonoBehaviour
 		GetController();
 		if(OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, controller))
 		{
-			Debug.Log(Time.time + ": Hand Trigger is being Pressed");
+			///Debug.Log(Time.time + ": Hand Trigger is being Pressed");
 			handTriggerPressed = true;
 			if(collisionHappenedFirst && holdingObject == null)
 			{

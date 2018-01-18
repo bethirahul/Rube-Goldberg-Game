@@ -72,12 +72,6 @@ public class GameLogic : MonoBehaviour
 	public positionStruct howToWinInfo_startPosition;
 	#endregion
 
-	/*//   A W A K E                                                                                                      
-	void Awake()
-	{
-		DontDestroyOnLoad(transform.gameObject);
-	}*/
-
 	//   S T A R T                                                                                                      
 	void Start()
 	{
@@ -103,6 +97,7 @@ public class GameLogic : MonoBehaviour
 		// Scene Transition
 		InitSceneTransition(SceneTransition.starting);
 		teleportLocation_GO.SetActive(false);
+		ResetAllButtons();
 		if(currentLevel != 0)
 		{
 			restartMenu.SetActive(true);
