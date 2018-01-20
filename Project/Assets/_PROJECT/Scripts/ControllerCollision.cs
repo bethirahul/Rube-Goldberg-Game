@@ -128,11 +128,8 @@ public class ControllerCollision : MonoBehaviour
 			colliding = true;
 			if(collider.gameObject.tag == "Grabbable")
 			{
-				if(collider.gameObject.GetComponentInParent<GrabbableObject>().type == GrabbableObject.objectType.fan)
-				{
-					collidingObject = collider.transform.parent.gameObject;
-					return;
-				}
+				collidingObject = collider.transform.parent.gameObject;
+				return;
 			}
 			collidingObject = collider.gameObject;
 		}
