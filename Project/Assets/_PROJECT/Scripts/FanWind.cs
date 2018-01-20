@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Collections;
 
 public class FanWind : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class FanWind : MonoBehaviour
 
 	void OnTriggerStay(Collider collider)
 	{
-		if(collider.transform.tag == "Throwable")
+		if(collider.transform.tag == "Throwable" && GL.isGameStarted)
 		{
 			
 		}

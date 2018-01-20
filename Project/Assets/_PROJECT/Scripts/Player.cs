@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
 	//  Teleport
 	private bool isMoving;
+	public bool isOnPlatform;
 	private Vector3 teleportLocation;
 	private Vector3 startPosition;
 	private float lerpDistance;
@@ -42,6 +43,7 @@ public class Player : MonoBehaviour
 		///camera = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor");
 
 		isMoving = false;
+		isOnPlatform = false;
 	}
 
 	public void InitTeleport(Vector3 tLoc)
@@ -100,4 +102,18 @@ public class Player : MonoBehaviour
 			angle = -angle;
 		return angle;
 	}*/
+
+	void OnTriggerStay(Collider collider)
+	{
+		///Debug.Log("Player standing on object with tag: " + collider.transform.tag + "; " + isOnPlatform);
+		if(collider.transform.tag == "Stage")
+			isOnPlatform = true;
+		else
+			isOnPlatform = false;
+	}
+
+	void OnTriggerExit()
+	{
+		isOnPlatform = false;
+	}
 }

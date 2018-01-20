@@ -37,6 +37,7 @@ public class GameLogic : MonoBehaviour
 	private int starsCollected;
 	private bool levelFinished;
 	private GameObject[] star;
+	public bool isGameStarted;
 
 	//  Scene Changing
 	private enum SceneTransition
@@ -126,6 +127,7 @@ public class GameLogic : MonoBehaviour
 
 			starsCollected = 0;
 			levelFinished = false;
+			isGameStarted = false;
 		}
 	}
 
@@ -303,6 +305,7 @@ public class GameLogic : MonoBehaviour
 		Debug.Log("Ball touched ground");
 		starsCollected = 0;
 		ball.Reset();
+		isGameStarted = false;
 		AllStars_SetActive(true);
 	}
 
@@ -323,6 +326,12 @@ public class GameLogic : MonoBehaviour
 		starsCollected++;
 		collidedStar.SetActive(false);
 		Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
+	}
+
+	public void BallLaunched()
+	{
+		Debug.Log("Ball launched from platform ---------------------------");
+		isGameStarted = true;
 	}
 
 	private void ChangeLevel()

@@ -180,6 +180,8 @@ public class ControllerCollision : MonoBehaviour
 
 				holdingObject_rigidbody.angularVelocity =
 							transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(controller));
+				if(holdingObject.name == "Ball" && player.isOnPlatform)
+					GL.BallLaunched();
 			}
 			holdingObject = null;
 			holdingObject_rigidbody = null;
