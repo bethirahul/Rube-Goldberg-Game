@@ -135,6 +135,23 @@ public class ControllerCollision : MonoBehaviour
 		}
 	}
 
+	void OnTriggerStay(Collider collider)
+	{
+		if(!colliding && !handTriggerPressed &&
+		   (collider.gameObject.tag == "Throwable" || collider.gameObject.tag == "Grabbable"))
+		{
+			Debug.Log(Time.time + ": Started colliding with " + collider.gameObject.tag + " object");
+			Debug.Log(": Collision happened first - s*");
+			collisionHappenedFirst = true;
+			if(collider.gameObject.tag == "Grabbable")
+			{
+				collidingObject = collider.transform.parent.gameObject;
+				return;
+			}
+			collidingObject = collider.gameObject;
+		}
+	}
+
 	//  Collision Exit
 	void OnTriggerExit(Collider collider)
 	{
