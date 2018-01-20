@@ -12,6 +12,7 @@ public class GameLogic : MonoBehaviour
 	private Player player;
 	public float teleportSpeed;
 	public float moveSpeed;
+	private Transform centerCamTransform;
 	///[System.Serializable]
 
 	//  Ball
@@ -35,6 +36,7 @@ public class GameLogic : MonoBehaviour
 	public int totalStars;
 	private int starsCollected;
 	private bool levelFinished;
+	private GameObject[] star;
 
 	//  Scene Changing
 	private enum SceneTransition
@@ -88,8 +90,8 @@ public class GameLogic : MonoBehaviour
 		if(controllerLayout.layout == ControllerLayout.layoutEnum.reversed)
 			SwitchControllers();
 
-		Physics.IgnoreCollision(player.GetComponent<Collider>(), L_controller_GO.GetComponent<Collider>());
-		Physics.IgnoreCollision(player.GetComponent<Collider>(), R_controller_GO.GetComponent<Collider>());
+		/*Physics.IgnoreCollision(player.GetComponent<Collider>(), L_controller_GO.GetComponent<Collider>());
+		Physics.IgnoreCollision(player.GetComponent<Collider>(), R_controller_GO.GetComponent<Collider>());*/
 
 		// Player
 		player.Init();
@@ -101,8 +103,13 @@ public class GameLogic : MonoBehaviour
 		if(currentLevel != 0)
 		{
 			ball = GameObject.Find("Ball").GetComponent<Ball>();
-			Physics.IgnoreCollision(player.GetComponent<Collider>(),
-									GameObject.Find("Ball/Collider").GetComponent<Collider>());
+			/*Physics.IgnoreCollision(player.GetComponent<Collider>(),
+									GameObject.Find("Ball/Collider").GetComponent<Collider>());*/
+
+			centerCamTransform = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").transform;
+
+			star = GameObject.FindGameObjectsWithTag("Star");
+			AllStars_SetActive(true);
 
 			/*restartMenu.SetActive(true);
 
@@ -122,6 +129,12 @@ public class GameLogic : MonoBehaviour
 		}
 	}
 
+	private void AllStars_SetActive(bool state)
+	{
+		for(int i = 0; i < star.Length; i++)
+			star[i].SetActive(state);
+	}
+
 	//  SCENE TRANSITION
 	private void InitSceneTransition(SceneTransition sceneTrans)
 	{
@@ -139,7 +152,14 @@ public class GameLogic : MonoBehaviour
 	{
 		CheckInput();
 		TeleportPlayer();
+		StarsLookAtPlayer();
 		CheckSceneTransition();
+	}
+
+	private void StarsLookAtPlayer()
+	{
+		for(int i = 0; i < star.Length; i++)
+			star[i].transform.LookAt(centerCamTransform);
 	}
 
 	//  SCENE TRANSITION
@@ -281,7 +301,9 @@ public class GameLogic : MonoBehaviour
 	public void BallTouchedGround()
 	{
 		Debug.Log("Ball touched ground");
+		starsCollected = 0;
 		ball.Reset();
+		AllStars_SetActive(true);
 	}
 
 	public void BallTouchedFinish()
@@ -294,6 +316,13 @@ public class GameLogic : MonoBehaviour
 			/// Enable UI to show level finished
 			Invoke("ChangeLevel", 5f);
 		}*/
+	}
+
+	public void BallTouchedStar(GameObject collidedStar)
+	{
+		starsCollected++;
+		collidedStar.SetActive(false);
+		Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
 	}
 
 	private void ChangeLevel()

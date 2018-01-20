@@ -23,6 +23,8 @@ public class Ball : MonoBehaviour
 			GL.BallTouchedGround();
 		else if(collider.transform.tag == "Finish")
 			GL.BallTouchedFinish();
+		else if(collider.transform.tag == "Star")
+			GL.BallTouchedStar(collider.gameObject);
 	}
 
 	public void Reset()
