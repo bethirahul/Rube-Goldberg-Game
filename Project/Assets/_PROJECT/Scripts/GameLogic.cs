@@ -263,6 +263,26 @@ public class GameLogic : MonoBehaviour
 		InitSceneTransition(SceneTransition.ending);
 	}
 
+	public void ResetBallButton()
+	{
+		Debug.Log("Reset Ball Button pressed");
+		ControllerCollision L_controllerCollision = L_controller_GO.GetComponent<ControllerCollision>();
+		ControllerCollision R_controllerCollision = R_controller_GO.GetComponent<ControllerCollision>();
+		if(L_controllerCollision.holdingObject == ball.gameObject)
+		{
+			Debug.Log("Releasing Ball from Left hand");
+			L_controllerCollision.ReleaseObject();
+			L_controllerCollision.RemoveBallFromCollision();
+		}
+		else if(R_controllerCollision.holdingObject == ball.gameObject)
+		{
+			Debug.Log("Releasing Ball from Right hand");
+			R_controllerCollision.ReleaseObject();
+			R_controllerCollision.RemoveBallFromCollision();
+		}
+		ResetBall();
+	}
+
 	public void ResetAllButtons()
 	{
 		/*if(currentLevel == 0)
@@ -302,7 +322,13 @@ public class GameLogic : MonoBehaviour
 	//  BALL
 	public void BallTouchedGround()
 	{
-		Debug.Log("Ball touched ground");
+		Debug.Log("Ball Touched Ground/Stage");
+		ResetBall();
+	}
+
+	private void ResetBall()
+	{
+		Debug.Log("Ball Reset");
 		starsCollected = 0;
 		ball.Reset();
 		isGameStarted = false;

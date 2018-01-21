@@ -15,7 +15,8 @@ public class VRButton : MonoBehaviour
 		start,
 		restartLevel,
 		exit,
-		switchControllers
+		switchControllers,
+		resetBall
 	};
 	public buttonType type;
 
@@ -58,5 +59,10 @@ public class VRButton : MonoBehaviour
 		}
 		else if(type == buttonType.restartLevel)
 			GL.RestartLevelButton();
+		else if(type == buttonType.resetBall)
+		{
+			GL.ResetBallButton();
+			Invoke("Init", 0.125f);
+		}
 	}
 }

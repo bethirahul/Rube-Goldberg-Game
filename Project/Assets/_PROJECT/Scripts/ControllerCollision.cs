@@ -14,7 +14,7 @@ public class ControllerCollision : MonoBehaviour
 	private float[] timeStamp;
 
 	//  Grab
-	private GameObject holdingObject;
+	public GameObject holdingObject;
 	private GameObject collidingObject;
 	private Rigidbody holdingObject_rigidbody;
 	private bool collisionHappenedFirst;
@@ -157,10 +157,13 @@ public class ControllerCollision : MonoBehaviour
 	{
 		Debug.Log(Time.time + ": Stopped colliding with " + collider.gameObject.tag + " object");
 		if(collider.gameObject.tag == "Throwable" || collider.gameObject.tag == "Grabbable")
-		{
-			colliding = false;
-			collisionHappenedFirst = false;
-		}
+			RemoveBallFromCollision();
+	}
+
+	public void RemoveBallFromCollision()
+	{
+		colliding = false;
+		collisionHappenedFirst = false;
 	}
 
 	//  Release
