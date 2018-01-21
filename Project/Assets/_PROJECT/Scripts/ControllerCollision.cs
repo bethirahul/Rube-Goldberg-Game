@@ -89,13 +89,13 @@ public class ControllerCollision : MonoBehaviour
 				/*Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(),
 				                        player.GetComponent<Collider>());*/
 
-				Debug.Log(": Already Colliding, so Holding object");
+				///Debug.Log(": Already Colliding, so Holding object");
 			}
 		}
 		else
 		{
-			if(handTriggerPressed)
-				Debug.Log(Time.time + ": Trigger Released");
+			/*if(handTriggerPressed)
+				Debug.Log(Time.time + ": Trigger Released");*/
 			handTriggerPressed = false;
 			ReleaseObject();
 		}
@@ -117,12 +117,12 @@ public class ControllerCollision : MonoBehaviour
 	//  Collision Enter
 	void OnTriggerEnter(Collider collider)
 	{
-		Debug.Log(Time.time + ": Started colliding with " + collider.gameObject.tag + " object");
+		///Debug.Log(Time.time + ": Started colliding with " + collider.gameObject.tag + " object");
 		if(collider.gameObject.tag == "Throwable" || collider.gameObject.tag == "Grabbable")
 		{
 			if(!handTriggerPressed && !colliding)
 			{
-				Debug.Log(": Collision happened first");
+				///Debug.Log(": Collision happened first");
 				collisionHappenedFirst = true;
 			}
 			colliding = true;
@@ -140,8 +140,8 @@ public class ControllerCollision : MonoBehaviour
 		if(!colliding && !handTriggerPressed &&
 		   (collider.gameObject.tag == "Throwable" || collider.gameObject.tag == "Grabbable"))
 		{
-			Debug.Log(Time.time + ": Started colliding with " + collider.gameObject.tag + " object");
-			Debug.Log(": Collision happened first - s*");
+			///Debug.Log(Time.time + ": Started colliding with " + collider.gameObject.tag + " object");
+			///Debug.Log(": Collision happened first - s*");
 			collisionHappenedFirst = true;
 			if(collider.gameObject.tag == "Grabbable")
 			{
@@ -155,7 +155,7 @@ public class ControllerCollision : MonoBehaviour
 	//  Collision Exit
 	void OnTriggerExit(Collider collider)
 	{
-		Debug.Log(Time.time + ": Stopped colliding with " + collider.gameObject.tag + " object");
+		///Debug.Log(Time.time + ": Stopped colliding with " + collider.gameObject.tag + " object");
 		if(collider.gameObject.tag == "Throwable" || collider.gameObject.tag == "Grabbable")
 			RemoveBallFromCollision();
 	}

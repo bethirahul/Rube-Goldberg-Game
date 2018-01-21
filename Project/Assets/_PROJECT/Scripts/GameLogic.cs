@@ -37,7 +37,7 @@ public class GameLogic : MonoBehaviour
 	public int totalLevels;
 	public int totalStars;
 	private int starsCollected;
-	private bool levelFinished;
+	///private bool levelFinished;
 	private GameObject[] star;
 	public bool isGameStarted;
 
@@ -56,6 +56,7 @@ public class GameLogic : MonoBehaviour
 	private Renderer R_maskRend;
 	public Color maskColor;
 	public Color ballResetMaskColor;
+	public Color winMaskColor;
 	private Color nullColor = new Color(0,0,0,0);
 	public float sceneChangingTime;
 	private float endTime;
@@ -131,7 +132,7 @@ public class GameLogic : MonoBehaviour
 			howToWinInfo.transform.rotation   = Quaternion.Euler(howToWinInfo_startPosition.rotation);*/
 
 			starsCollected = 0;
-			levelFinished = false;
+			///levelFinished = false;
 			isGameStarted = false;
 		}
 	}
@@ -165,8 +166,9 @@ public class GameLogic : MonoBehaviour
 
 	private void StarsLookAtPlayer()
 	{
-		for(int i = 0; i < star.Length; i++)
-			star[i].transform.LookAt(centerCamTransform);
+		if(currentLevel != 0)
+			for(int i = 0; i < star.Length; i++)
+				star[i].transform.LookAt(centerCamTransform);
 	}
 
 	//  SCENE TRANSITION
@@ -327,7 +329,7 @@ public class GameLogic : MonoBehaviour
 	{
 		Debug.Log("Ball Touched Ground/Stage");
 		L_mask.SetActive(true);
-		L_mask.SetActive(true);
+		R_mask.SetActive(true);
 		L_maskRend.material.color = ballResetMaskColor;
 		R_maskRend.material.color = ballResetMaskColor;
 		Invoke("ResetMasks", 0.5f);
@@ -337,7 +339,7 @@ public class GameLogic : MonoBehaviour
 	private void ResetMasks()
 	{
 		L_mask.SetActive(false);
-		L_mask.SetActive(false);
+		R_mask.SetActive(false);
 		L_maskRend.material.color = nullColor;
 		R_maskRend.material.color = nullColor;
 	}
@@ -353,14 +355,21 @@ public class GameLogic : MonoBehaviour
 
 	public void BallTouchedFinish()
 	{
-		Debug.Log("**** Ball touched Finish");
-		/*if(starsCollected == totalStars && !levelFinished)
+		Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + totalStars);
+		if(starsCollected == totalStars)/// && !levelFinished)
 		{
 			Debug.Log("Level Finished");
-			levelFinished = true;
-			/// Enable UI to show level finished
+			///levelFinished = true;
+			L_mask.SetActive(true);
+			R_mask.SetActive(true);
+			L_maskRend.material.color = winMaskColor;
+			R_maskRend.material.color = winMaskColor;
+			Invoke("ResetMasks", 0.5f);
+			ball.gameObject.SetActive(false);
 			Invoke("ChangeLevel", 5f);
-		}*/
+		}
+		else
+			BallTouchedGround();
 	}
 
 	public void BallTouchedStar(GameObject collidedStar)
@@ -378,11 +387,13 @@ public class GameLogic : MonoBehaviour
 
 	private void ChangeLevel()
 	{
-		if(totalLevels == currentLevel)
+		if(totalLevels != currentLevel)
 			InitSceneTransition(SceneTransition.ending);
 		else
 		{
 			Debug.Log("GameOver, you did it!");
+			currentLevel = 0;
+			InitSceneTransition(SceneTransition.ending);
 		}
 	}
 }
