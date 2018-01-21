@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine.WSA;
 using UnityEngine.Experimental.U2D;
 using UnityEngine.EventSystems;
+using UnityEngine.Experimental.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -115,5 +116,15 @@ public class Player : MonoBehaviour
 	void OnTriggerExit()
 	{
 		isOnPlatform = false;
+	}
+
+	void Update()
+	{
+		if(rigidbody.velocity.magnitude >= GL.maxPlayerVelocity)
+		{
+			Debug.Log("Player velocirt was: " + rigidbody.velocity.magnitude);
+			rigidbody.velocity = rigidbody.velocity.normalized * GL.maxPlayerVelocity;
+			Debug.Log(": Corrected to " + rigidbody.velocity.magnitude);
+		}
 	}
 }

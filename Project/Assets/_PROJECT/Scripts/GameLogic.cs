@@ -13,6 +13,7 @@ public class GameLogic : MonoBehaviour
 	public float teleportSpeed;
 	public float moveSpeed;
 	private Transform centerCamTransform;
+	public float maxPlayerVelocity;
 	///[System.Serializable]
 
 	//  Ball

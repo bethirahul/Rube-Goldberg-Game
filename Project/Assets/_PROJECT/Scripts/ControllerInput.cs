@@ -32,6 +32,7 @@ public class ControllerInput : MonoBehaviour
 	{
 		GL = GameObject.Find("GameLogic").GetComponent<GameLogic>();
 		teleportLocation_GO = GameObject.Find("TeleportLocation");
+		TeleportLocation_SetActive(false);
 
 		ray.gameObject.SetActive(false);
 		GL.L_controller_GO.GetComponent<ControllerCollision>().Init();

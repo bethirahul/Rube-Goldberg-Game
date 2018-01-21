@@ -6,7 +6,6 @@ public class Ball : MonoBehaviour
 {
 	private GameLogic GL;
 	private Vector3 startPosition;
-	private Vector3[] lastPositions;
 	private bool isMoving;
 	private Rigidbody rigidbody;
 
