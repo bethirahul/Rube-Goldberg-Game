@@ -8,10 +8,12 @@ public class Ball : MonoBehaviour
 	private Vector3 startPosition;
 	private Vector3[] lastPositions;
 	private bool isMoving;
+	private Rigidbody rigidbody;
 
 	void Start()
 	{
 		GL = GameObject.Find("GameLogic").GetComponent<GameLogic>();
+		rigidbody = GetComponent<Rigidbody>();
 		startPosition = transform.position;
 	}
 
@@ -31,15 +33,13 @@ public class Ball : MonoBehaviour
 	{
 		transform.position = startPosition;
 		transform.rotation = Quaternion.Euler(Vector3.zero);
-		GetComponent<Rigidbody>().isKinematic = true;
+		rigidbody.isKinematic = true;
 		isMoving = false;
 	}
 
 	void Update()
 	{
-		if(isMoving)
-		{
-			
-		}
+		if(rigidbody.velocity.magnitude <= GL.ballResetSpeed && rigidbody.isKinematic == false)/// && transform.parent.gameObject == null)
+			GL.BallTouchedGround();
 	}
 }

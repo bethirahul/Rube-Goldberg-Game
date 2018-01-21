@@ -17,6 +17,7 @@ public class GameLogic : MonoBehaviour
 
 	//  Ball
 	private Ball ball;
+	public float ballResetSpeed;
 
 	//  Controllers
 	private ControllerLayout controllerLayout;
@@ -52,6 +53,9 @@ public class GameLogic : MonoBehaviour
 	private GameObject R_mask;
 	private Renderer L_maskRend;
 	private Renderer R_maskRend;
+	public Color maskColor;
+	public Color ballResetMaskColor;
+	private Color nullColor = new Color(0,0,0,0);
 	public float sceneChangingTime;
 	private float endTime;
 	private float startTime;
@@ -170,10 +174,9 @@ public class GameLogic : MonoBehaviour
 		if(sceneTransition == SceneTransition.starting)
 		{
 			float fraction = 1f - ((Time.time - startTime) / sceneChangingTime);
-			Color color = L_maskRend.material.color;
-			color = new Color(color.r, color.g, color.b, fraction);
-			L_maskRend.material.color = color;
-			R_maskRend.material.color = color;
+			Color myColor = new Color(maskColor.r, maskColor.g, maskColor.b, fraction);
+			L_maskRend.material.color = myColor;
+			R_maskRend.material.color = myColor;
 			if(fraction <= 0f)
 			{
 				sceneTransition = SceneTransition.complete;
@@ -186,8 +189,7 @@ public class GameLogic : MonoBehaviour
 		else if(sceneTransition == SceneTransition.ending || sceneTransition == SceneTransition.exit)
 		{
 			float fraction = (Time.time - startTime) / sceneChangingTime;
-			Color myColor = L_maskRend.material.color;
-			myColor = new Color(myColor.r, myColor.g, myColor.b, fraction);
+			Color myColor = new Color(maskColor.r, maskColor.g, maskColor.b, fraction);
 			L_maskRend.material.color = myColor;
 			R_maskRend.material.color = myColor;
 			if(fraction >= 1f)
@@ -323,7 +325,20 @@ public class GameLogic : MonoBehaviour
 	public void BallTouchedGround()
 	{
 		Debug.Log("Ball Touched Ground/Stage");
+		L_mask.SetActive(true);
+		L_mask.SetActive(true);
+		L_maskRend.material.color = ballResetMaskColor;
+		R_maskRend.material.color = ballResetMaskColor;
+		Invoke("ResetMasks", 0.5f);
 		ResetBall();
+	}
+
+	private void ResetMasks()
+	{
+		L_mask.SetActive(false);
+		L_mask.SetActive(false);
+		L_maskRend.material.color = nullColor;
+		R_maskRend.material.color = nullColor;
 	}
 
 	private void ResetBall()
