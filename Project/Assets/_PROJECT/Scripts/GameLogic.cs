@@ -275,6 +275,7 @@ public class GameLogic : MonoBehaviour
 		else
 			controllerLayout.layout = ControllerLayout.layoutEnum.normal;
 		controllerInfo.ChangeControllersInfo();
+		controllerInput.ObjSpawnMenu_SetActive(true);
 	}
 
 	private void SwitchControllers()

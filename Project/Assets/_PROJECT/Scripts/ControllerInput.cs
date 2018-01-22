@@ -27,6 +27,8 @@ public class ControllerInput : MonoBehaviour
 	private Text objCount_text;
 	private int displayCount;
 	private bool isChangedAlready;
+	public Vector3 objSpawnMenu_position;
+	public Vector3 objSpawnMenu_rotation;
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -60,6 +62,7 @@ public class ControllerInput : MonoBehaviour
 		obj_img 	    = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/Obj_Img").GetComponent<Image>();
 		objName_text    = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/ObjName_Text").GetComponent<Text>();
 		objCount_text   = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/Count_Text").GetComponent<Text>();
+		displayCount = 0;
 		ObjSpawnMenu_SetActive(false);
 	}
 	
@@ -195,11 +198,11 @@ public class ControllerInput : MonoBehaviour
 		{
 			isChangedAlready = false;
 			objSpawnMenu_GO.SetActive(true);
-			displayCount = 0;
 			SetSpawnObject(displayCount);
 			objSpawnMenu_GO.transform.SetParent(GL.L_controller_GO.transform);
 			objSpawnMenu_GO.transform.rotation = GL.L_controller_GO.transform.rotation;
-			objSpawnMenu_GO.transform.position = GL.L_controller_GO.transform.TransformPoint(new Vector3(0,0.175f,0));
+			objSpawnMenu_GO.transform.Rotate(objSpawnMenu_rotation, Space.Self);
+			objSpawnMenu_GO.transform.position = GL.L_controller_GO.transform.TransformPoint(objSpawnMenu_position);
 		}
 		else
 		{
@@ -218,7 +221,7 @@ public class ControllerInput : MonoBehaviour
 		Debug.Log("Object set to " + displayCount);
 		obj_img.sprite = GL.objSpawner[displayCount].sprite;
 		objName_text.text = GL.objSpawner[displayCount].name;
-		objCount_text.text = GL.objSpawner[displayCount].left + "/" + GL.objSpawner[displayCount].count + " left";
+		objCount_text.text = GL.objSpawner[displayCount].left + " of " + GL.objSpawner[displayCount].count + "  left";
 	}
 
 	// Ground Ray
