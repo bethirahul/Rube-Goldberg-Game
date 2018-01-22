@@ -75,7 +75,13 @@ public class GameLogic : MonoBehaviour
 		public GameObject GO;
 		public string name;
 		public int count;
+		public int left;
 		public Sprite sprite;
+
+		public void Init()
+		{
+			left = count;
+		}
 	};
 	public objSpawnerStruct[] objSpawner;
 	#endregion
@@ -123,6 +129,8 @@ public class GameLogic : MonoBehaviour
 
 		// Player
 		player.Init();
+		for(int i = 0; i < objSpawner.Length; i++)
+			objSpawner[i].Init();
 		controllerInput.Init();
 
 		// Scene Transition
@@ -311,17 +319,6 @@ public class GameLogic : MonoBehaviour
 
 	public void ResetAllButtons()
 	{
-		/*if(currentLevel == 0)
-		{
-			start_btn.Init();
-			mm_exit_btn.Init();
-		}
-		else
-		{
-			exit_btn.Init();
-			restartLevel_btn.Init();
-		}
-		switch_btn.Init();*/
 		for(int i = 0; i < button.Length; i++)
 			button[i].Init();
 	}

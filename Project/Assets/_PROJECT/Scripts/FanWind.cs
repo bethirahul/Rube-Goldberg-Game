@@ -24,7 +24,7 @@ public class FanWind : MonoBehaviour
 		}
 		else
 		{
-			blades_GO.transform.Rotate(new Vector3(0, 0, 0.5f));
+			blades_GO.transform.Rotate(new Vector3(0, 0, 0.25f));
 		}
 	}
 

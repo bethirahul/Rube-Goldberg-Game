@@ -1,8 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.iOS;
-using UnityEngine.Experimental.UIElements;
+using UnityEngine.UI;
+using System.Xml.Linq;
+using UnityEngine.Experimental.UIElements.StyleEnums;
+
+
+///using UnityEngine.iOS;
+///using UnityEngine.Experimental.UIElements;
 
 public class ControllerInput : MonoBehaviour
 {
@@ -17,7 +22,11 @@ public class ControllerInput : MonoBehaviour
 	//  OBJECT SPAWNER MENU
 	private bool isMenuOpen;
 	private GameObject objSpawnMenu_GO;
-	private Image objSpawnMenu_img;
+	private Image obj_img;
+	private Text objName_text;
+	private Text objCount_text;
+	private int displayCount;
+	private bool isChangedAlready;
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -47,8 +56,11 @@ public class ControllerInput : MonoBehaviour
 		R_holdingObject = null;*/
 
 		isMenuOpen = false;
-		objSpawnMenu_GO  = GameObject.Find("ObjSpawnMenu_UI");
-		objSpawnMenu_img = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/Obj_Img").GetComponent<Image>();
+		objSpawnMenu_GO = GameObject.Find("ObjSpawnMenu_UI");
+		obj_img 	    = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/Obj_Img").GetComponent<Image>();
+		objName_text    = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/ObjName_Text").GetComponent<Text>();
+		objCount_text   = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/Count_Text").GetComponent<Text>();
+		ObjSpawnMenu_SetActive(false);
 	}
 	
 	//   U P D A T E                                                                                                    
@@ -147,21 +159,66 @@ public class ControllerInput : MonoBehaviour
 		if(OVRInput.GetDown(OVRInput.Button.Two, GL.L_controller))
 		{
 			Debug.Log("Object Spawner Menu Button pressed");
-			isMenuOpen = true;
-			ObjSpawnMenu_SetActive(true);
+			ObjSpawnMenu_SetActive(!isMenuOpen);
 		}
 
-		if(OVRInput.GetUp(OVRInput.Button.Two, GL.L_controller))
+		/*if(OVRInput.GetUp(OVRInput.Button.Two, GL.L_controller))
 		{
 			Debug.Log("Object Spawner Menu Button released");
-			isMenuOpen = false;
 			ObjSpawnMenu_SetActive(false);
+		}*/
+
+		if(isMenuOpen)
+		{
+			joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, GL.L_controller);
+			/*if(joystickInput != Vector2.zero)
+				Debug.Log("Joystick Input: " + joystickInput.x);*/
+			if(Mathf.Abs(joystickInput.x) < 0.3f && isChangedAlready)
+				isChangedAlready = false;
+			else if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready)
+			{
+				isChangedAlready = true;
+				SetSpawnObject((int)Mathf.Round(joystickInput.x));
+			}
+			if(OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, GL.L_controller))
+			{
+				Debug.Log("Joystick Button Pressed");
+				///////////////////////////////////Spawn object
+			}
 		}
 	}
 
 	public void ObjSpawnMenu_SetActive(bool state)
 	{
-		
+		isMenuOpen = state;
+		if(state)
+		{
+			isChangedAlready = false;
+			objSpawnMenu_GO.SetActive(true);
+			displayCount = 0;
+			SetSpawnObject(displayCount);
+			objSpawnMenu_GO.transform.SetParent(GL.L_controller_GO.transform);
+			objSpawnMenu_GO.transform.rotation = GL.L_controller_GO.transform.rotation;
+			objSpawnMenu_GO.transform.position = GL.L_controller_GO.transform.TransformPoint(new Vector3(0,0.175f,0));
+		}
+		else
+		{
+			objSpawnMenu_GO.transform.SetParent(null);
+			objSpawnMenu_GO.SetActive(false);
+		}
+	}
+
+	private void SetSpawnObject(int inc)
+	{
+		displayCount = displayCount + inc;
+		if(displayCount < 0)
+			displayCount = GL.objSpawner.Length - 1;
+		else if(displayCount >= GL.objSpawner.Length)
+			displayCount = 0;
+		Debug.Log("Object set to " + displayCount);
+		obj_img.sprite = GL.objSpawner[displayCount].sprite;
+		objName_text.text = GL.objSpawner[displayCount].name;
+		objCount_text.text = GL.objSpawner[displayCount].left + "/" + GL.objSpawner[displayCount].count + " left";
 	}
 
 	// Ground Ray
