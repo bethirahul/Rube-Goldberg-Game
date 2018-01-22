@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
 		///camera = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor");
 
 		isMoving = false;
-		isOnPlatform = false;
+		///isOnPlatform = false;
 	}
 
 	public void InitTeleport(Vector3 tLoc)

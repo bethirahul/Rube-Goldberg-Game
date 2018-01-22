@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.iOS;
+using UnityEngine.Experimental.UIElements;
 
 public class ControllerInput : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class ControllerInput : MonoBehaviour
 	//  TELEPORT
 	private GameObject teleportLocation_GO;
 	public LineRenderer ray;
+
+	//  OBJECT SPAWNER MENU
+	private bool isMenuOpen;
+	private GameObject objSpawnMenu_GO;
+	private Image objSpawnMenu_img;
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -39,6 +45,10 @@ public class ControllerInput : MonoBehaviour
 		GL.R_controller_GO.GetComponent<ControllerCollision>().Init();
 		/*L_holdingObject = null;
 		R_holdingObject = null;*/
+
+		isMenuOpen = false;
+		objSpawnMenu_GO  = GameObject.Find("ObjSpawnMenu_UI");
+		objSpawnMenu_img = GameObject.Find("ObjSpawnMenu_UI/ObjSpawnMenu_Canvas/Obj_Img").GetComponent<Image>();
 	}
 	
 	//   U P D A T E                                                                                                    
@@ -66,8 +76,8 @@ public class ControllerInput : MonoBehaviour
 					TeleportLocation_SetActive(false);
 					hit.collider.gameObject.GetComponent<VRButton>().Hover();
 				}
-
-				else if(hit.transform.tag == "Ground")
+				else
+				if(hit.transform.tag == "Ground")
 				{
 					if(teleportLocation_GO != null)
 						teleportLocation_GO.transform.position = hit.point;
@@ -80,7 +90,7 @@ public class ControllerInput : MonoBehaviour
 			{
 				GL.ResetAllButtons();
 				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
-									  GL.R_controller_GO.transform.position;
+				                      GL.R_controller_GO.transform.position;
 				ray.SetPosition(1, rayEndPoint);
 
 				GroundRay(rayEndPoint, true);
@@ -103,10 +113,9 @@ public class ControllerInput : MonoBehaviour
 
 				if(hit.transform.tag == "Button")
 					hit.collider.gameObject.GetComponent<VRButton>().Click();
-
-				else if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
+				else
+				if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
 					GL.InitTeleportPlayer(hit.point);
-
 				else
 					GroundRay(hit.point, false);
 			}
@@ -114,7 +123,7 @@ public class ControllerInput : MonoBehaviour
 			{
 				GL.ResetAllButtons();
 				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
-									  GL.R_controller_GO.transform.position;
+				                      GL.R_controller_GO.transform.position;
 				ray.SetPosition(1, rayEndPoint);
 
 				GroundRay(rayEndPoint, false);
@@ -133,6 +142,26 @@ public class ControllerInput : MonoBehaviour
 			if(holdingObject != null)
 				ReleaseObject();
 		}*/
+
+		// Object Spawner Menu
+		if(OVRInput.GetDown(OVRInput.Button.Two, GL.L_controller))
+		{
+			Debug.Log("Object Spawner Menu Button pressed");
+			isMenuOpen = true;
+			ObjSpawnMenu_SetActive(true);
+		}
+
+		if(OVRInput.GetUp(OVRInput.Button.Two, GL.L_controller))
+		{
+			Debug.Log("Object Spawner Menu Button released");
+			isMenuOpen = false;
+			ObjSpawnMenu_SetActive(false);
+		}
+	}
+
+	public void ObjSpawnMenu_SetActive(bool state)
+	{
+		
 	}
 
 	// Ground Ray

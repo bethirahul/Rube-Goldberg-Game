@@ -67,6 +67,17 @@ public class GameLogic : MonoBehaviour
 	//  UI
 	private VRButton[] button;
 	private ControlsMenu controllerInfo;
+
+	//  Object Spawner Menu
+	[System.Serializable]
+	public struct objSpawnerStruct
+	{
+		public GameObject GO;
+		public string name;
+		public int count;
+		public Sprite sprite;
+	};
+	public objSpawnerStruct[] objSpawner;
 	#endregion
 
 	//   S T A R T                                                                                                      
