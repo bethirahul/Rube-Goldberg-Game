@@ -20,7 +20,7 @@ public class ControllerInput : MonoBehaviour
 	public LineRenderer ray;
 
 	//  OBJECT SPAWNER MENU
-	private bool isMenuOpen;
+	public bool isMenuOpen;
 	private GameObject objSpawnMenu_GO;
 	private Image obj_img;
 	private Text objName_text;
@@ -29,6 +29,7 @@ public class ControllerInput : MonoBehaviour
 	private bool isChangedAlready;
 	public Vector3 objSpawnMenu_position;
 	public Vector3 objSpawnMenu_rotation;
+	public Vector3 objSpawn_position;
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -162,7 +163,8 @@ public class ControllerInput : MonoBehaviour
 		if(OVRInput.GetDown(OVRInput.Button.Two, GL.L_controller))
 		{
 			Debug.Log("Object Spawner Menu Button pressed");
-			ObjSpawnMenu_SetActive(!isMenuOpen);
+			GL.OpenObjectSpawMenu(!isMenuOpen);
+			///ObjSpawnMenu_SetActive(!isMenuOpen);
 		}
 
 		/*if(OVRInput.GetUp(OVRInput.Button.Two, GL.L_controller))
@@ -178,7 +180,8 @@ public class ControllerInput : MonoBehaviour
 				Debug.Log("Joystick Input: " + joystickInput.x);*/
 			if(Mathf.Abs(joystickInput.x) < 0.3f && isChangedAlready)
 				isChangedAlready = false;
-			else if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready)
+			else
+			if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready)
 			{
 				isChangedAlready = true;
 				SetSpawnObject((int)Mathf.Round(joystickInput.x));
@@ -187,6 +190,15 @@ public class ControllerInput : MonoBehaviour
 			{
 				Debug.Log("Joystick Button Pressed");
 				///////////////////////////////////Spawn object
+				if(GL.objSpawner[displayCount].left > 0)
+				{
+					Instantiate(GL.objSpawner[displayCount].GO,
+					        GL.L_controller_GO.transform.TransformPoint(objSpawn_position),
+					        Quaternion.Euler(new Vector3(0, GL.L_controller_GO.transform.rotation.eulerAngles.y, 0)));
+					GL.objSpawner[displayCount].left--;
+					objCount_text.text = GL.objSpawner[displayCount].left + " of " +
+										 GL.objSpawner[displayCount].count+ "  left";
+				}
 			}
 		}
 	}
@@ -198,7 +210,7 @@ public class ControllerInput : MonoBehaviour
 		{
 			isChangedAlready = false;
 			objSpawnMenu_GO.SetActive(true);
-			SetSpawnObject(displayCount);
+			SetSpawnObject(0);
 			objSpawnMenu_GO.transform.SetParent(GL.L_controller_GO.transform);
 			objSpawnMenu_GO.transform.rotation = GL.L_controller_GO.transform.rotation;
 			objSpawnMenu_GO.transform.Rotate(objSpawnMenu_rotation, Space.Self);

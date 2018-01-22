@@ -12,7 +12,7 @@ public class GameLogic : MonoBehaviour
 	private Player player;
 	public float teleportSpeed;
 	public float moveSpeed;
-	private Transform centerCamTransform;
+	public Transform centerCamTransform;
 	public float maxPlayerVelocity;
 	///[System.Serializable]
 
@@ -274,8 +274,11 @@ public class GameLogic : MonoBehaviour
 			controllerLayout.layout = ControllerLayout.layoutEnum.reversed;
 		else
 			controllerLayout.layout = ControllerLayout.layoutEnum.normal;
+
 		controllerInfo.ChangeControllersInfo();
-		controllerInput.ObjSpawnMenu_SetActive(true);
+
+		if(controllerInput.isMenuOpen)
+			controllerInput.ObjSpawnMenu_SetActive(true);
 	}
 
 	private void SwitchControllers()
@@ -341,6 +344,12 @@ public class GameLogic : MonoBehaviour
 	{
 		if(sceneTransition == SceneTransition.complete && currentLevel != 0)
 			player.Move(joystickInput);
+	}
+
+	public void OpenObjectSpawMenu(bool state)
+	{
+		if(currentLevel != 0)
+			controllerInput.ObjSpawnMenu_SetActive(state);
 	}
 
 	//  BALL
