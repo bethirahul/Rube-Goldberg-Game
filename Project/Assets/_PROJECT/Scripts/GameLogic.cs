@@ -20,6 +20,8 @@ public class GameLogic : MonoBehaviour
 	private Ball ball;
 	public float ballResetSpeed;
 
+	public float fanSpeed;
+
 	//  Controllers
 	private ControllerLayout controllerLayout;
 	private ControllerInput controllerInput;
@@ -71,6 +73,14 @@ public class GameLogic : MonoBehaviour
 	void Start()
 	{
 		InitLevel();
+		InvokeRepeating("PrintFrameRate", 0f, 0.1f);
+	}
+
+	private void PrintFrameRate()
+	{
+		float temp = 1.0f/Time.deltaTime;
+		if(temp < 90)
+			Debug.Log(Time.time + ": Frame Rate below 90, its " + temp);
 	}
 
 	//  INIT LEVEL
@@ -347,8 +357,13 @@ public class GameLogic : MonoBehaviour
 	private void ResetBall()
 	{
 		Debug.Log("Ball Reset");
-		starsCollected = 0;
 		ball.Reset();
+		ResetGame();
+	}
+
+	public void ResetGame()
+	{
+		starsCollected = 0;
 		isGameStarted = false;
 		AllStars_SetActive(true);
 	}

@@ -85,6 +85,8 @@ public class ControllerCollision : MonoBehaviour
 				holdingObject.transform.SetParent(gameObject.transform);
 				holdingObject_rigidbody = holdingObject.GetComponent<Rigidbody>();
 				holdingObject_rigidbody.isKinematic = true;
+				if(holdingObject.name == "Ball")
+					GL.ResetGame();
 
 				/*Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(),
 				                        player.GetComponent<Collider>());*/
