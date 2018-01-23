@@ -8,12 +8,14 @@ public class Ball : MonoBehaviour
 	private Vector3 startPosition;
 	private bool isMoving;
 	private Rigidbody rigidbody;
+	public bool isRolling;
 
 	void Start()
 	{
 		GL = GameObject.Find("GameLogic").GetComponent<GameLogic>();
 		rigidbody = GetComponent<Rigidbody>();
 		startPosition = transform.position;
+		isRolling = false;
 	}
 
 	void OnTriggerEnter(Collider collider)
@@ -40,5 +42,10 @@ public class Ball : MonoBehaviour
 	{
 		if(rigidbody.velocity.magnitude <= GL.ballResetSpeed && rigidbody.isKinematic == false)/// && transform.parent.gameObject == null)
 			GL.BallTouchedGround();
+
+		if(rigidbody.velocity.magnitude <= 0.1f)
+			isRolling = true;
+		else
+			isRolling = false;
 	}
 }
