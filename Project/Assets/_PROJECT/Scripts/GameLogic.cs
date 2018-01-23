@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Analytics;
+using Oculus.Platform;
 
 public class GameLogic : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class GameLogic : MonoBehaviour
 	public AudioClip starAudio;
 	public AudioClip goalAudio;
 	public AudioClip gameOverAudio;
+	public AudioClip teleportAudio;
+	public float cameraRadius;
 
 	//  Ball
 	private Ball ball;
@@ -70,6 +73,8 @@ public class GameLogic : MonoBehaviour
 	//  UI
 	private VRButton[] button;
 	private ControlsMenu controllerInfo;
+	public GameObject message_GO;
+	public Text message_Text;
 	/*private GameObject gameOverMenu_GO;
 	private Text levelFinished_text;
 	private GameObject nextLevelText_GO;
@@ -119,15 +124,24 @@ public class GameLogic : MonoBehaviour
 		R_controller_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/RightHandAnchor");
 		L_mask = GameObject.Find("Player/OVRCameraRig/TrackingSpace/LeftEyeAnchor/Mask");
 		R_mask = GameObject.Find("Player/OVRCameraRig/TrackingSpace/RightEyeAnchor/Mask");
+		/*L_controller_GO = GameObject.Find("Player/TrackingSpace/LeftHandAnchor");
+		R_controller_GO = GameObject.Find("Player/TrackingSpace/RightHandAnchor");
+		L_mask = GameObject.Find("Player/TrackingSpace/LeftEyeAnchor/Mask");
+		R_mask = GameObject.Find("Player/TrackingSpace/RightEyeAnchor/Mask");*/
 		L_maskRend = L_mask.GetComponent<Renderer>();
 		R_maskRend = R_mask.GetComponent<Renderer>();
 		controllerInfo = GameObject.Find("ControlsMenu_UI").GetComponent<ControlsMenu>();
 		playerSpeaker = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
+		///playerSpeaker = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 
 		GameObject[] temp = GameObject.FindGameObjectsWithTag("Button");
 		button = new VRButton[temp.Length];
 		for(int i = 0; i < button.Length; i++)
 			button[i] = temp[i].GetComponent<VRButton>();
+
+		message_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor/Message_UI");
+		///message_GO = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor/Message_UI");
+		message_Text = message_GO.GetComponentInChildren<Text>();
 
 		// Controller Layout
 		if(controllerLayout.layout == ControllerLayout.layoutEnum.reversed)
@@ -142,11 +156,13 @@ public class GameLogic : MonoBehaviour
 		// Scene Transition
 		InitSceneTransition(SceneTransition.starting);
 		ResetAllButtons();
+
 		if(currentLevel != 0)
 		{
 			ball = GameObject.Find("Ball").GetComponent<Ball>();
 
 			centerCamTransform = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").transform;
+			///centerCamTransform = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor").transform;
 
 
 			/*gameOverMenu_GO = GameObject.Find("GameOverMenu_Pivot");
@@ -230,7 +246,7 @@ public class GameLogic : MonoBehaviour
 				if(sceneTransition == SceneTransition.exit)
 				{
 					Debug.Log("Application Exit");
-					Application.Quit();
+					UnityEngine.Application.Quit();
 					Debug.Log("Application Exit executed in editor");
 					return;
 				}
@@ -258,13 +274,13 @@ public class GameLogic : MonoBehaviour
 
 	public void ExitButton()
 	{
-		Debug.Log("Exit Button pressed!");
+		///Debug.Log("Exit Button pressed!");
 		InitSceneTransition(SceneTransition.exit);
 	}
 
 	public void SwitchControllersButton()
 	{
-		Debug.Log("Switch Controllers Button pressed!");
+		///Debug.Log("Switch Controllers Button pressed!");
 
 		L_controller_GO.GetComponent<ControllerCollision>().ReleaseObject();
 		R_controller_GO.GetComponent<ControllerCollision>().ReleaseObject();
@@ -293,6 +309,8 @@ public class GameLogic : MonoBehaviour
 		temp_controller_GO = L_controller_GO;
 		L_controller_GO = R_controller_GO;
 		R_controller_GO = temp_controller_GO;
+
+		DisplayMessage("Actions on controllers have switched");
 	}
 
 	public void RestartLevelButton()
@@ -332,7 +350,11 @@ public class GameLogic : MonoBehaviour
 	public void InitTeleportPlayer(Vector3 tLoc)
 	{
 		if(currentLevel != 0 && sceneTransition == SceneTransition.complete)
+		{
 			player.InitTeleport(tLoc);
+			playerSpeaker.clip = teleportAudio;
+			playerSpeaker.Play();
+		}
 	}
 
 	private void TeleportPlayer()
@@ -394,32 +416,56 @@ public class GameLogic : MonoBehaviour
 		if(ball.gameObject.transform.parent == null)
 		{
 			Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + star.Length);///totalStars);
-			if(starsCollected >= star.Length && isGameStarted)
+			if(isGameStarted)
 			{
-				Debug.Log("Level Finished");
-				///levelFinished = true;
-				L_mask.SetActive(true);
-				R_mask.SetActive(true);
-				L_maskRend.material.color = winMaskColor;
-				R_maskRend.material.color = winMaskColor;
-				Invoke("ResetMasks", 0.5f);
-				ball.gameObject.SetActive(false);
-				if(currentLevel == totalLevels)
+				if(starsCollected >= star.Length)
 				{
-					player.nextLevelText_GO.SetActive(false);
-					player.gameOverText_GO.SetActive(true);
-					playerSpeaker.clip = gameOverAudio;
+					Debug.Log("Level Finished");
+					///levelFinished = true;
+					L_mask.SetActive(true);
+					R_mask.SetActive(true);
+					L_maskRend.material.color = winMaskColor;
+					R_maskRend.material.color = winMaskColor;
+					Invoke("ResetMasks", 0.5f);
+					ball.gameObject.SetActive(false);
+					if(currentLevel == totalLevels)
+					{
+						player.nextLevelText_GO.SetActive(false);
+						player.gameOverText_GO.SetActive(true);
+						playerSpeaker.clip = gameOverAudio;
+					}
+					else
+						playerSpeaker.clip = goalAudio;
+
+					playerSpeaker.Play();
+					player.gameOverMenu_GO.SetActive(true);
+					Invoke("ChangeLevel", 3.333f);
 				}
 				else
-					playerSpeaker.clip = goalAudio;
-
-				playerSpeaker.Play();
-				player.gameOverMenu_GO.SetActive(true);
-				Invoke("ChangeLevel", 3.333f);
+				{
+					DisplayMessage("Only " + starsCollected + " of " + star.Length + " star(s) collected!");
+					BallTouchedGround();
+				}
 			}
 			else
+			{
+				DisplayMessage("Ball must be thrown from the stage");
 				BallTouchedGround();
+			}
 		}
+	}
+
+	public void DisplayMessage(string message)
+	{
+		message_Text.text = message;
+		message_GO.SetActive(true);
+		CancelInvoke("TurnOff_message_GO");
+		Invoke("TurnOff_message_GO", 3f);
+	}
+
+	public void TurnOff_message_GO()
+	{
+		message_GO.SetActive(false);
 	}
 
 	public void BallTouchedStar(GameObject collidedStar)

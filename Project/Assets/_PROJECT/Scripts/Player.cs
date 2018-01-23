@@ -6,6 +6,7 @@ using UnityEngine.WSA;
 using UnityEngine.Experimental.U2D;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Experimental.UIElements.StyleEnums;
 
 public class Player : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class Player : MonoBehaviour
 
 	//  Game Over Menu
 	public GameObject gameOverMenu_GO;
-	public Text 	   levelFinished_text;
+	public Text 	  levelFinished_text;
 	public GameObject nextLevelText_GO;
 	public GameObject gameOverText_GO;
 	#endregion
@@ -133,6 +134,24 @@ public class Player : MonoBehaviour
 			///Debug.Log("Player velocirt was: " + rigidbody.velocity.magnitude);
 			rigidbody.velocity = rigidbody.velocity.normalized * GL.maxPlayerVelocity;
 			///Debug.Log(": Corrected to " + rigidbody.velocity.magnitude);
+		}
+		///AdjustPlayerWithCamera();
+	}
+
+	private void AdjustPlayerWithCamera()
+	{
+		Vector3 cameraPos = camera.transform.position;
+		Vector3 camPos = new Vector3(cameraPos.x, transform.position.y, cameraPos.z);
+		float dist = Mathf.Abs(Vector3.Distance(transform.position, camPos));
+		float lerpDist = (dist - GL.cameraRadius)/GL.cameraRadius;
+		if(dist > GL.cameraRadius)
+		{
+			Debug.Log("Camera = " + cameraPos + ", corrected = " + camPos + "; Player = " + transform.position);
+			Vector3 lerpPos = Vector3.Lerp(transform.position, camPos, lerpDist);
+			Debug.Log("Distance between = " + dist + ", lerpDist = " + lerpDist + "; lerpPos = " + lerpPos);
+			transform.position = lerpPos;
+			camera.transform.position = cameraPos;
+			Debug.Log("New Camera position = " + camera.transform.position);
 		}
 	}
 }

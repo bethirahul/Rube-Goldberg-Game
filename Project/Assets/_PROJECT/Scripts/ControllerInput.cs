@@ -16,7 +16,6 @@ public class ControllerInput : MonoBehaviour
 	private Player player;
 	public AudioSource speaker;
 	public AudioClip buttonClickAudio;
-	public AudioClip teleportAudio;
 
 	//  TELEPORT
 	private GameObject teleportLocation_GO;
@@ -137,11 +136,7 @@ public class ControllerInput : MonoBehaviour
 					speaker.Play();
 				}
 				else if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
-				{
 					GL.InitTeleportPlayer(hit.point);
-					speaker.clip = teleportAudio;
-					speaker.Play();
-				}
 				else
 					GroundRay(hit.point, false);
 			}
@@ -259,11 +254,7 @@ public class ControllerInput : MonoBehaviour
 				TeleportLocation_SetActive(true);
 			}
 			else
-			{
 				GL.InitTeleportPlayer(groundHit.point);
-				speaker.clip = teleportAudio;
-				speaker.Play();
-			}
 		}
 		else
 		{

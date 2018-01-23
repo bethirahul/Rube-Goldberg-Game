@@ -217,8 +217,11 @@ public class ControllerCollision : MonoBehaviour
 
 				holdingObject_rigidbody.angularVelocity =
 							transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(controller));
-				if(holdingObject.name == "Ball" && player.isOnPlatform)
-					GL.BallLaunched();
+				if(holdingObject.name == "Ball")
+					if(player.isOnPlatform)
+						GL.BallLaunched();
+					else
+						GL.DisplayMessage("Throw the ball from the platform");
 			}
 			holdingObject = null;
 			holdingObject_rigidbody = null;

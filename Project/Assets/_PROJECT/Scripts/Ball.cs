@@ -29,7 +29,10 @@ public class Ball : MonoBehaviour
 		if(collider.transform.tag == "Ground" ||
 		   collider.transform.tag == "BallReset" ||
 		   collider.transform.tag == "Stage")
+		{
 			GL.BallTouchedGround();
+			///GL.DisplayMessage("Ball fell to the ground");
+		}
 		else if(collider.transform.tag == "Finish")
 			GL.BallTouchedFinish();
 		else if(collider.transform.tag == "Star")
@@ -64,7 +67,10 @@ public class Ball : MonoBehaviour
 			}
 			ballStoppedDuration += Time.deltaTime;
 			if(ballStoppedDuration >= GL.ballResetTime)
+			{
 				GL.BallTouchedGround();
+				GL.DisplayMessage("Ball got stuck!");
+			}
 		}
 
 		/*if(rigidbody.velocity.magnitude <= 0.1f)
