@@ -4,10 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Xml.Linq;
 using UnityEngine.Experimental.UIElements.StyleEnums;
+using NUnit.Framework;
 
 
 ///using UnityEngine.iOS;
 ///using UnityEngine.Experimental.UIElements;
+
+// This has logic about teleporting using raycasting and object spawner menu
 
 public class ControllerInput : MonoBehaviour
 {
@@ -29,9 +32,9 @@ public class ControllerInput : MonoBehaviour
 	private Text objCount_text;
 	private int displayCount;
 	private bool isChangedAlready;
-	public Vector3 objSpawnMenu_position;
+	public Vector3 objSpawnMenu_position; // location of object spawner transform with respect to hand controller
 	public Vector3 objSpawnMenu_rotation;
-	public Vector3 objSpawn_position;
+	public Vector3 objSpawn_position; // spawned object location with respect player camera
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -74,37 +77,38 @@ public class ControllerInput : MonoBehaviour
 	// INPUT
 	public void CheckInput()
 	{
-		// B Button Press
+		// B Button Press - Teleporting button, hold to see the ray and release to teleport
 		if(OVRInput.Get(OVRInput.Button.Two, GL.R_controller))
 		{
 			ray.gameObject.SetActive(true);
 			ray.SetPosition(0, GL.R_controller_GO.transform.position);
 
 			RaycastHit hit;
+			// Hit a ray
 			if(Physics.Raycast(GL.R_controller_GO.transform.position,
 			                   GL.R_controller_GO.transform.forward, out hit, GL.rayRange, GL.rayMask))
 			{
 				ray.SetPosition(1, hit.point);
 
-				if(hit.transform.tag != "Button")
+				if(hit.transform.tag != "Button") // if ray doesnt hit button, make the button to it's normal color
 					GL.ResetAllButtons();
 
-				if(hit.transform.tag == "Button")
+				if(hit.transform.tag == "Button")  // if ray hits button, highlight that button
 				{
 					TeleportLocation_SetActive(false);
 					hit.collider.gameObject.GetComponent<VRButton>().Hover();
 				}
 				else
-				if(hit.transform.tag == "Ground")
+				if(hit.transform.tag == "Ground") // ray hits ground
 				{
 					if(teleportLocation_GO != null)
 						teleportLocation_GO.transform.position = hit.point;
 					TeleportLocation_SetActive(true);
 				}
-				else
+				else // if ray hits something, check the ground
 					GroundRay(hit.point, true);
 			}
-			else
+			else // if ray doesnt hit anything, check ground at the end or ray
 			{
 				GL.ResetAllButtons();
 				Vector3 rayEndPoint = (GL.R_controller_GO.transform.forward * GL.rayRange) +
@@ -116,7 +120,7 @@ public class ControllerInput : MonoBehaviour
 		}
 
 		// B Button Up
-		if(OVRInput.GetUp(OVRInput.Button.Two, GL.R_controller))
+		if(OVRInput.GetUp(OVRInput.Button.Two, GL.R_controller)) // when teleporting button is released
 		{
 			////Debug.Log("B button released");
 			ray.gameObject.SetActive(false);
@@ -129,7 +133,7 @@ public class ControllerInput : MonoBehaviour
 				if(hit.transform.tag != "Button")
 					GL.ResetAllButtons();
 
-				if(hit.transform.tag == "Button")
+				if(hit.transform.tag == "Button") // call button function
 				{
 					hit.collider.gameObject.GetComponent<VRButton>().Click();
 					speaker.clip = buttonClickAudio;
@@ -151,7 +155,7 @@ public class ControllerInput : MonoBehaviour
 			}
 		}
 
-		// Joystick
+		// Joystick input to move player
 		Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, GL.R_controller);
 		if(joystickInput != Vector2.zero)
 			GL.MovePlayer(joystickInput);
@@ -168,7 +172,7 @@ public class ControllerInput : MonoBehaviour
 		if(OVRInput.GetDown(OVRInput.Button.Two, GL.L_controller))
 		{
 			Debug.Log("Object Spawner Menu Button pressed");
-			GL.OpenObjectSpawMenu(!isMenuOpen);
+			GL.OpenObjectSpawMenu(!isMenuOpen); // Toggle for object menu spawner
 			///ObjSpawnMenu_SetActive(!isMenuOpen);
 		}
 
@@ -178,24 +182,24 @@ public class ControllerInput : MonoBehaviour
 			ObjSpawnMenu_SetActive(false);
 		}*/
 
-		if(isMenuOpen)
+		if(isMenuOpen) // if object menu is open, take the joystick input for that
 		{
 			joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, GL.L_controller);
 			/*if(joystickInput != Vector2.zero)
 				Debug.Log("Joystick Input: " + joystickInput.x);*/
-			if(Mathf.Abs(joystickInput.x) < 0.3f && isChangedAlready)
+			if(Mathf.Abs(joystickInput.x) < 0.3f && isChangedAlready) // change only when joystick again goes back
 				isChangedAlready = false;
 			else
-			if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready)
+			if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready) // change oonly once when joystick is pushed left or right
 			{
 				isChangedAlready = true;
 				SetSpawnObject((int)Mathf.Round(joystickInput.x));
 			}
-			if(OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, GL.L_controller))
+			if(OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, GL.L_controller)) // spawn shown object when joystick button is pressed
 			{
 				Debug.Log("Joystick Button Pressed");
 				///////////////////////////////////Spawn object
-				if(GL.objSpawner[displayCount].left > 0)
+				if(GL.objSpawner[displayCount].left > 0) // check if objects are left to be spawned
 				{
 					Instantiate(GL.objSpawner[displayCount].GO,
 					        GL.L_controller_GO.transform.TransformPoint(objSpawn_position),
@@ -208,7 +212,7 @@ public class ControllerInput : MonoBehaviour
 		}
 	}
 
-	public void ObjSpawnMenu_SetActive(bool state)
+	public void ObjSpawnMenu_SetActive(bool state) // neable disable object spawner menu
 	{
 		isMenuOpen = state;
 		if(state)
@@ -228,7 +232,7 @@ public class ControllerInput : MonoBehaviour
 		}
 	}
 
-	private void SetSpawnObject(int inc)
+	private void SetSpawnObject(int inc) // change displayed object in menu - left/right
 	{
 		displayCount = displayCount + inc;
 		if(displayCount < 0)
@@ -242,7 +246,7 @@ public class ControllerInput : MonoBehaviour
 	}
 
 	// Ground Ray
-	private void GroundRay(Vector3 startPoint, bool isButtonPress)
+	private void GroundRay(Vector3 startPoint, bool isButtonPress) // checking ground at the teleporting point by again raycasting down towards ground
 	{
 		RaycastHit groundHit;
 		if(Physics.Raycast(startPoint, -Vector3.up, out groundHit, GL.rayRange, GL.rayMask))

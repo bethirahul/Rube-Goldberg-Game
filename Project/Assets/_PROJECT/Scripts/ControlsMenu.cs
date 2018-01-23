@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// this is to show controller's infor with a button to switch controllers
+// description changes when controllers change
+
 public class ControlsMenu : MonoBehaviour
 {
 	public GameObject info_A;

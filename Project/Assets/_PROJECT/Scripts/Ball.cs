@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// This is for ball to detect collisions with ball, such as goal, fan, ground, etc
+
 public class Ball : MonoBehaviour
 {
 	private GameLogic GL;
@@ -9,7 +11,7 @@ public class Ball : MonoBehaviour
 	///private bool isMoving;
 	private Rigidbody rigidbody;
 	///public bool isRolling;
-	private bool ballStopped;
+	private bool ballStopped; // this is to determine if the ball got stuck
 	private float ballStoppedDuration;
 	///private AudioSource speaker;
 	///public AudioClip ballAudio;
@@ -58,6 +60,7 @@ public class Ball : MonoBehaviour
 
 	void Update()
 	{
+		// If ball speed is less, then start timer, if timer runs out, reset ball
 		if(rigidbody.velocity.magnitude <= GL.ballResetSpeed && rigidbody.isKinematic == false)/// && transform.parent.gameObject == null)
 		{
 			if(!ballStopped)

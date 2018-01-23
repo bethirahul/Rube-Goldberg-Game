@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
 	public GameObject gameOverMenu_GO;
 	public Text 	  levelFinished_text;
 	public GameObject nextLevelText_GO;
-	public GameObject gameOverText_GO;
+	public GameObject gameOverText_GO; // display gameover infront of camera
 	#endregion
 	
 	//   S T A R T                                                                                                      
@@ -61,9 +61,9 @@ public class Player : MonoBehaviour
 		teleportLocation = tLoc;
 		startPosition = rigidbody.position;
 		isMoving = true;
-		rigidbody.isKinematic = true;
+		rigidbody.isKinematic = true; // make player not colliding with anything when teleporting
 		lerpDistance = 0;
-		totalDistance = Vector3.Distance(startPosition, teleportLocation);
+		totalDistance = Vector3.Distance(startPosition, teleportLocation); // setting up distance to use lerp
 	}
 
 	//   U P D A T E                                                                                                    
@@ -72,13 +72,13 @@ public class Player : MonoBehaviour
 		if(isMoving)
 		{
 			lerpDistance = lerpDistance + ((Time.deltaTime * GL.teleportSpeed) / totalDistance);
-			rigidbody.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance);
+			rigidbody.position = Vector3.Lerp(startPosition, teleportLocation, lerpDistance); // calculate lerp by framerate for smooth movement
 			if(lerpDistance >= 1)
 			{
 				///rigidbody.position = teleportLocation;
 				transform.position = teleportLocation;
 				isMoving = false;
-				rigidbody.isKinematic = false;
+				rigidbody.isKinematic = false; // make player collider with objects again after teleporting
 			}
 		}
 	}
@@ -91,15 +91,15 @@ public class Player : MonoBehaviour
 		Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
 		direction = direction * moveSpeed * Time.deltaTime;
 		rigidbody.position += direction;*/
-		if(isMoving)
+		if(isMoving) // stop teleporting when joystick input is given
 		{
 			isMoving = false;
 			rigidbody.isKinematic = false;
 		}
-		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y);
+		Vector3 joystickDirection = new Vector3(joystickInput.x, 0, joystickInput.y); // convert joystick input to XZ direction with respect to camera
 		Vector3 direction = camera.transform.TransformDirection(joystickDirection);
 		direction = new Vector3(direction.x, 0, direction.z);
-		direction = direction * GL.moveSpeed * Time.deltaTime;
+		direction = direction * GL.moveSpeed * Time.deltaTime; // move player with certain speed set in gamelogic and framte rate
 		///rigidbody.position += direction;
 		transform.position += direction;
 	}
@@ -116,8 +116,8 @@ public class Player : MonoBehaviour
 	void OnTriggerStay(Collider collider)
 	{
 		///Debug.Log("Player standing on object with tag: " + collider.transform.tag + "; " + isOnPlatform);
-		if(collider.transform.tag == "Stage")
-			isOnPlatform = true;
+		if(collider.transform.tag == "Stage") // to check if player is standing on stage
+			isOnPlatform = true; 
 		else
 			isOnPlatform = false;
 	}
@@ -129,7 +129,7 @@ public class Player : MonoBehaviour
 
 	void Update()
 	{
-		if(rigidbody.velocity.magnitude >= GL.maxPlayerVelocity)
+		if(rigidbody.velocity.magnitude >= GL.maxPlayerVelocity) // this is to limit player speed, to reduce VR sickness
 		{
 			///Debug.Log("Player velocirt was: " + rigidbody.velocity.magnitude);
 			rigidbody.velocity = rigidbody.velocity.normalized * GL.maxPlayerVelocity;

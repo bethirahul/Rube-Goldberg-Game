@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
 
+// THis is for All buttons, has button type and functions for each button type
+
 public class VRButton : MonoBehaviour
 {
 	private Renderer rend;
