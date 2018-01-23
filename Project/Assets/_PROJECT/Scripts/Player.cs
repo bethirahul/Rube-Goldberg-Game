@@ -138,7 +138,7 @@ public class Player : MonoBehaviour
 		///AdjustPlayerWithCamera();
 	}
 
-	private void AdjustPlayerWithCamera()
+	/*private void AdjustPlayerWithCamera()
 	{
 		Vector3 cameraPos = camera.transform.position;
 		Vector3 camPos = new Vector3(cameraPos.x, transform.position.y, cameraPos.z);
@@ -153,5 +153,5 @@ public class Player : MonoBehaviour
 			camera.transform.position = cameraPos;
 			Debug.Log("New Camera position = " + camera.transform.position);
 		}
-	}
+	}*/
 }
