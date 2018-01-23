@@ -14,6 +14,9 @@ public class ControllerInput : MonoBehaviour
 	#region Global_Variables
 	private GameLogic GL;
 	private Player player;
+	public AudioSource speaker;
+	public AudioClip buttonClickAudio;
+	public AudioClip teleportAudio;
 
 	//  TELEPORT
 	private GameObject teleportLocation_GO;
@@ -116,7 +119,7 @@ public class ControllerInput : MonoBehaviour
 		// B Button Up
 		if(OVRInput.GetUp(OVRInput.Button.Two, GL.R_controller))
 		{
-			Debug.Log("B button released");
+			////Debug.Log("B button released");
 			ray.gameObject.SetActive(false);
 			TeleportLocation_SetActive(false);
 
@@ -128,10 +131,17 @@ public class ControllerInput : MonoBehaviour
 					GL.ResetAllButtons();
 
 				if(hit.transform.tag == "Button")
+				{
 					hit.collider.gameObject.GetComponent<VRButton>().Click();
-				else
-				if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
+					speaker.clip = buttonClickAudio;
+					speaker.Play();
+				}
+				else if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
+				{
 					GL.InitTeleportPlayer(hit.point);
+					speaker.clip = teleportAudio;
+					speaker.Play();
+				}
 				else
 					GroundRay(hit.point, false);
 			}
@@ -249,7 +259,11 @@ public class ControllerInput : MonoBehaviour
 				TeleportLocation_SetActive(true);
 			}
 			else
+			{
 				GL.InitTeleportPlayer(groundHit.point);
+				speaker.clip = teleportAudio;
+				speaker.Play();
+			}
 		}
 		else
 		{

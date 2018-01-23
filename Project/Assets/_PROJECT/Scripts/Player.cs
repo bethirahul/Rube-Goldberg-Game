@@ -31,7 +31,6 @@ public class Player : MonoBehaviour
 	public Text 	   levelFinished_text;
 	public GameObject nextLevelText_GO;
 	public GameObject gameOverText_GO;
-
 	#endregion
 	
 	//   S T A R T                                                                                                      
@@ -131,9 +130,9 @@ public class Player : MonoBehaviour
 	{
 		if(rigidbody.velocity.magnitude >= GL.maxPlayerVelocity)
 		{
-			Debug.Log("Player velocirt was: " + rigidbody.velocity.magnitude);
+			///Debug.Log("Player velocirt was: " + rigidbody.velocity.magnitude);
 			rigidbody.velocity = rigidbody.velocity.normalized * GL.maxPlayerVelocity;
-			Debug.Log(": Corrected to " + rigidbody.velocity.magnitude);
+			///Debug.Log(": Corrected to " + rigidbody.velocity.magnitude);
 		}
 	}
 }

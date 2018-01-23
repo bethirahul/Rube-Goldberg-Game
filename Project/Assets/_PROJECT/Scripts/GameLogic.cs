@@ -14,12 +14,15 @@ public class GameLogic : MonoBehaviour
 	public float moveSpeed;
 	public Transform centerCamTransform;
 	public float maxPlayerVelocity;
-	///[System.Serializable]
+	private AudioSource playerSpeaker;
+	public AudioClip starAudio;
+	public AudioClip goalAudio;
+	public AudioClip gameOverAudio;
 
 	//  Ball
 	private Ball ball;
 	public float ballResetSpeed;
-
+	public float ballResetTime;
 	public float fanSpeed;
 
 	//  Controllers
@@ -37,7 +40,7 @@ public class GameLogic : MonoBehaviour
 	//  Level
 	public int currentLevel;
 	public int totalLevels;
-	public int totalStars;
+	///public int totalStars;
 	private int starsCollected;
 	///private bool levelFinished;
 	private GameObject[] star;
@@ -88,20 +91,21 @@ public class GameLogic : MonoBehaviour
 		}
 	};
 	public objSpawnerStruct[] objSpawner;
+
 	#endregion
 
 	//   S T A R T                                                                                                      
 	void Start()
 	{
 		InitLevel();
-		InvokeRepeating("PrintFrameRate", 0f, 0.1f);
+		InvokeRepeating("PrintFrameRate", 0f, 1.0f);
 	}
 
 	private void PrintFrameRate()
 	{
 		float temp = 1.0f/Time.deltaTime;
-		if(temp < 90)
-			Debug.Log(Time.time + ": Frame Rate below 90, its " + temp);
+		///if(temp < 90 && temp != 50)
+			////Debug.Log(Time.time + ": Frame Rate below 90, its " + temp);
 	}
 
 	//  INIT LEVEL
@@ -118,6 +122,7 @@ public class GameLogic : MonoBehaviour
 		L_maskRend = L_mask.GetComponent<Renderer>();
 		R_maskRend = R_mask.GetComponent<Renderer>();
 		controllerInfo = GameObject.Find("ControlsMenu_UI").GetComponent<ControlsMenu>();
+		playerSpeaker = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 
 		GameObject[] temp = GameObject.FindGameObjectsWithTag("Button");
 		button = new VRButton[temp.Length];
@@ -142,6 +147,7 @@ public class GameLogic : MonoBehaviour
 			ball = GameObject.Find("Ball").GetComponent<Ball>();
 
 			centerCamTransform = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").transform;
+
 
 			/*gameOverMenu_GO = GameObject.Find("GameOverMenu_Pivot");
 			levelFinished_text
@@ -245,7 +251,7 @@ public class GameLogic : MonoBehaviour
 	//  BUTTONS
 	public void StartButton()
 	{
-		Debug.Log("Start Button pressed!");
+		////Debug.Log("Start Button pressed!");
 		///currentLevel = nextLevel;
 		InitSceneTransition(SceneTransition.ending);
 	}
@@ -350,13 +356,15 @@ public class GameLogic : MonoBehaviour
 	//  BALL
 	public void BallTouchedGround()
 	{
-		Debug.Log("Ball Touched Ground/Stage");
+		///Debug.Log("Ball Touched Ground/Stage");
 		L_mask.SetActive(true);
 		R_mask.SetActive(true);
 		L_maskRend.material.color = ballResetMaskColor;
 		R_maskRend.material.color = ballResetMaskColor;
 		Invoke("ResetMasks", 0.5f);
 		ResetBall();
+		///playerSpeaker.clip = failedTryAudio;
+		///playerSpeaker.Play();
 	}
 
 	private void ResetMasks()
@@ -369,7 +377,7 @@ public class GameLogic : MonoBehaviour
 
 	private void ResetBall()
 	{
-		Debug.Log("Ball Reset");
+		////Debug.Log("Ball Reset");
 		ball.Reset();
 		ResetGame();
 	}
@@ -385,8 +393,8 @@ public class GameLogic : MonoBehaviour
 	{
 		if(ball.gameObject.transform.parent == null)
 		{
-			Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + totalStars);
-			if(starsCollected == totalStars && isGameStarted)
+			Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + star.Length);///totalStars);
+			if(starsCollected >= star.Length && isGameStarted)
 			{
 				Debug.Log("Level Finished");
 				///levelFinished = true;
@@ -400,7 +408,12 @@ public class GameLogic : MonoBehaviour
 				{
 					player.nextLevelText_GO.SetActive(false);
 					player.gameOverText_GO.SetActive(true);
+					playerSpeaker.clip = gameOverAudio;
 				}
+				else
+					playerSpeaker.clip = goalAudio;
+
+				playerSpeaker.Play();
 				player.gameOverMenu_GO.SetActive(true);
 				Invoke("ChangeLevel", 3.333f);
 			}
@@ -413,6 +426,9 @@ public class GameLogic : MonoBehaviour
 	{
 		if(ball.gameObject.transform.parent == null && isGameStarted)
 		{
+			playerSpeaker.clip = starAudio;
+			playerSpeaker.Play();
+
 			starsCollected++;
 			collidedStar.SetActive(false);
 			Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
