@@ -67,6 +67,10 @@ public class GameLogic : MonoBehaviour
 	//  UI
 	private VRButton[] button;
 	private ControlsMenu controllerInfo;
+	/*private GameObject gameOverMenu_GO;
+	private Text levelFinished_text;
+	private GameObject nextLevelText_GO;
+	private GameObject gameOverText_GO;*/
 
 	//  Object Spawner Menu
 	[System.Serializable]
@@ -124,9 +128,6 @@ public class GameLogic : MonoBehaviour
 		if(controllerLayout.layout == ControllerLayout.layoutEnum.reversed)
 			SwitchControllers();
 
-		/*Physics.IgnoreCollision(player.GetComponent<Collider>(), L_controller_GO.GetComponent<Collider>());
-		Physics.IgnoreCollision(player.GetComponent<Collider>(), R_controller_GO.GetComponent<Collider>());*/
-
 		// Player
 		player.Init();
 		for(int i = 0; i < objSpawner.Length; i++)
@@ -139,26 +140,20 @@ public class GameLogic : MonoBehaviour
 		if(currentLevel != 0)
 		{
 			ball = GameObject.Find("Ball").GetComponent<Ball>();
-			/*Physics.IgnoreCollision(player.GetComponent<Collider>(),
-									GameObject.Find("Ball/Collider").GetComponent<Collider>());*/
 
 			centerCamTransform = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").transform;
 
+			/*gameOverMenu_GO = GameObject.Find("GameOverMenu_Pivot");
+			levelFinished_text
+				= GameObject.Find("GameOverMenu_UI/GameOverMenu_Canvas/Heading_Text").GetComponent<Text>();
+			nextLevelText_GO = GameObject.Find("GameOverMenu_UI/GameOverMenu_Canvas/NextLevel_Text");
+			gameOverText_GO  = GameObject.Find("GameOverMenu_UI/GameOverMenu_Canvas/GameOver_Text");
+			levelFinished_text.text = "Level " + currentLevel + " - Finished!";
+			nextLevelText_GO.SetActive(true);
+			gameOverMenu_GO.SetActive(false);*/
+
 			star = GameObject.FindGameObjectsWithTag("Star");
 			AllStars_SetActive(true);
-
-			/*restartMenu.SetActive(true);
-
-			ball_GO.SetActive(true);
-			ball_GO.transform.position = ball_startPosition[currentLevel-1];
-
-			player.transform.position = player_startPosition[currentLevel-1].position;
-			player.transform.rotation = Quaternion.Euler(player_startPosition[currentLevel-1].rotation);
-									   
-			controllerInfo.transform.position = controllerInfo_startPosition.position;
-			controllerInfo.transform.rotation = Quaternion.Euler(controllerInfo_startPosition.rotation);
-			howToWinInfo.transform.position   = howToWinInfo_startPosition.position;
-			howToWinInfo.transform.rotation   = Quaternion.Euler(howToWinInfo_startPosition.rotation);*/
 
 			starsCollected = 0;
 			///levelFinished = false;
@@ -388,28 +383,40 @@ public class GameLogic : MonoBehaviour
 
 	public void BallTouchedFinish()
 	{
-		Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + totalStars);
-		if(starsCollected == totalStars)/// && !levelFinished)
+		if(ball.gameObject.transform.parent == null)
 		{
-			Debug.Log("Level Finished");
-			///levelFinished = true;
-			L_mask.SetActive(true);
-			R_mask.SetActive(true);
-			L_maskRend.material.color = winMaskColor;
-			R_maskRend.material.color = winMaskColor;
-			Invoke("ResetMasks", 0.5f);
-			ball.gameObject.SetActive(false);
-			Invoke("ChangeLevel", 5f);
+			Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + totalStars);
+			if(starsCollected == totalStars && isGameStarted)
+			{
+				Debug.Log("Level Finished");
+				///levelFinished = true;
+				L_mask.SetActive(true);
+				R_mask.SetActive(true);
+				L_maskRend.material.color = winMaskColor;
+				R_maskRend.material.color = winMaskColor;
+				Invoke("ResetMasks", 0.5f);
+				ball.gameObject.SetActive(false);
+				if(currentLevel == totalLevels)
+				{
+					player.nextLevelText_GO.SetActive(false);
+					player.gameOverText_GO.SetActive(true);
+				}
+				player.gameOverMenu_GO.SetActive(true);
+				Invoke("ChangeLevel", 3.333f);
+			}
+			else
+				BallTouchedGround();
 		}
-		else
-			BallTouchedGround();
 	}
 
 	public void BallTouchedStar(GameObject collidedStar)
 	{
-		starsCollected++;
-		collidedStar.SetActive(false);
-		Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
+		if(ball.gameObject.transform.parent == null && isGameStarted)
+		{
+			starsCollected++;
+			collidedStar.SetActive(false);
+			Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
+		}
 	}
 
 	public void BallLaunched()
@@ -424,8 +431,8 @@ public class GameLogic : MonoBehaviour
 			InitSceneTransition(SceneTransition.ending);
 		else
 		{
-			Debug.Log("GameOver, you did it!");
-			currentLevel = 0;
+			Debug.Log("Moving to Main Menu!");
+			currentLevel = -1;
 			InitSceneTransition(SceneTransition.ending);
 		}
 	}

@@ -230,7 +230,7 @@ public class ControllerInput : MonoBehaviour
 			displayCount = GL.objSpawner.Length - 1;
 		else if(displayCount >= GL.objSpawner.Length)
 			displayCount = 0;
-		Debug.Log("Object set to " + displayCount);
+		///Debug.Log("Object set to " + displayCount);
 		obj_img.sprite = GL.objSpawner[displayCount].sprite;
 		objName_text.text = GL.objSpawner[displayCount].name;
 		objCount_text.text = GL.objSpawner[displayCount].left + " of " + GL.objSpawner[displayCount].count + "  left";

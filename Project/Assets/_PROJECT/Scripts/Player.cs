@@ -5,7 +5,7 @@ using System.IO;
 using UnityEngine.WSA;
 using UnityEngine.Experimental.U2D;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.UIElements;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -25,6 +25,13 @@ public class Player : MonoBehaviour
 
 	//  RigidBody
 	private Rigidbody rigidbody;
+
+	//  Game Over Menu
+	public GameObject gameOverMenu_GO;
+	public Text 	   levelFinished_text;
+	public GameObject nextLevelText_GO;
+	public GameObject gameOverText_GO;
+
 	#endregion
 	
 	//   S T A R T                                                                                                      
@@ -45,6 +52,8 @@ public class Player : MonoBehaviour
 
 		isMoving = false;
 		///isOnPlatform = false;
+
+		levelFinished_text.text = "Level " + GL.currentLevel + " - Finished!";
 	}
 
 	public void InitTeleport(Vector3 tLoc)
