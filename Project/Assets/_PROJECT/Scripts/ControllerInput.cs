@@ -138,8 +138,10 @@ public class ControllerInput : MonoBehaviour
 					hit.collider.gameObject.GetComponent<VRButton>().Click();
 					speaker.clip = buttonClickAudio;
 					speaker.Play();
+					GL.R_haptics.Vibrate(VibrationForce.Hard);
 				}
-				else if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
+				else
+				if(hit.transform.tag == "Ground" || hit.transform.tag == "Stage")
 					GL.InitTeleportPlayer(hit.point);
 				else
 					GroundRay(hit.point, false);
@@ -189,8 +191,7 @@ public class ControllerInput : MonoBehaviour
 				Debug.Log("Joystick Input: " + joystickInput.x);*/
 			if(Mathf.Abs(joystickInput.x) < 0.3f && isChangedAlready) // change only when joystick again goes back
 				isChangedAlready = false;
-			else
-			if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready) // change oonly once when joystick is pushed left or right
+			else if(Mathf.Abs(joystickInput.x) >= 0.8f && !isChangedAlready) // change oonly once when joystick is pushed left or right
 			{
 				isChangedAlready = true;
 				SetSpawnObject((int)Mathf.Round(joystickInput.x));
@@ -202,12 +203,18 @@ public class ControllerInput : MonoBehaviour
 				if(GL.objSpawner[displayCount].left > 0) // check if objects are left to be spawned
 				{
 					Instantiate(GL.objSpawner[displayCount].GO,
-					        GL.L_controller_GO.transform.TransformPoint(objSpawn_position),
-					        Quaternion.Euler(new Vector3(0, GL.L_controller_GO.transform.rotation.eulerAngles.y, 0)));
+					            GL.L_controller_GO.transform.TransformPoint(objSpawn_position),
+					            Quaternion.Euler(new Vector3(0, GL.L_controller_GO.transform.rotation.eulerAngles.y, 0)));
 					GL.objSpawner[displayCount].left--;
 					objCount_text.text = GL.objSpawner[displayCount].left + " of " +
-										 GL.objSpawner[displayCount].count+ "  left";
+					GL.objSpawner[displayCount].count + "  left";
+					GL.L_haptics.Vibrate(VibrationForce.Medium);
 				}
+				else
+				{
+					GL.L_haptics.Vibrate(VibrationForce.Medium);
+					GL.L_haptics.Vibrate(VibrationForce.Medium);
+				}	
 			}
 		}
 	}
@@ -243,6 +250,7 @@ public class ControllerInput : MonoBehaviour
 		obj_img.sprite = GL.objSpawner[displayCount].sprite;
 		objName_text.text = GL.objSpawner[displayCount].name;
 		objCount_text.text = GL.objSpawner[displayCount].left + " of " + GL.objSpawner[displayCount].count + "  left";
+		GL.L_haptics.Vibrate(VibrationForce.Light);
 	}
 
 	// Ground Ray

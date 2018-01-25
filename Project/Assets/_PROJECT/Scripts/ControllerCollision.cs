@@ -15,6 +15,7 @@ public class ControllerCollision : MonoBehaviour
 	private GameObject otherController_GO;
 
 	private Vector3[] lastPosition; // last positions and time are saved every frame to calculate throwing direction and force
+	private Vector3[] playerLastPosition;
 	private float[] timeStamp;
 
 	//  Grab
@@ -27,9 +28,16 @@ public class ControllerCollision : MonoBehaviour
 
 	//  Debug
 	public string controller_name;
+
+	private OculusHaptics haptics;
 	#endregion
 
 	//   S T A R T                                                                                                      
+	void Awake()
+	{
+		haptics = GetComponent<OculusHaptics>();
+	}
+
 	/*void Start()
 	{
 		GL = GameObject.Find("GameLogic").GetComponent<GameLogic>();
@@ -43,6 +51,7 @@ public class ControllerCollision : MonoBehaviour
 		///player = GameObject.Find("Player").GetComponent<Player>();
 
 		lastPosition = new Vector3[GL.lastFrametoCalcMotion];
+		playerLastPosition = new Vector3[GL.lastFrametoCalcMotion];
 		timeStamp    = new float[GL.lastFrametoCalcMotion];
 
 		GetController(); // this function is called to tell which controller is this - left or right
@@ -52,8 +61,9 @@ public class ControllerCollision : MonoBehaviour
 		colliding = false;
 		for(int i = 0; i < lastPosition.Length; i++)
 		{
-			lastPosition[i] = gameObject.transform.position;
-			timeStamp[i]    = Time.time;
+			lastPosition[i] 	  = transform.position;
+			playerLastPosition[i] = player.transform.position;
+			timeStamp[i]    	  = Time.time;
 		}
 	}
 
@@ -100,6 +110,7 @@ public class ControllerCollision : MonoBehaviour
 						otherCC.holdingObject = null;
 						otherCC.holdingObject_rigidbody = null;
 						otherCC.collisionHappenedFirst = false;
+						otherCC.GetComponent<OculusHaptics>().Vibrate(VibrationForce.Light);
 						///otherCC.ReleaseObject();
 					}
 
@@ -109,6 +120,7 @@ public class ControllerCollision : MonoBehaviour
 				holdingObject_rigidbody.isKinematic = true; // turn off the physics of that object
 				if(holdingObject.name == "Ball") // Reset the ball, this is to stop picking or catching ball after throwing
 					GL.ResetGame();
+				haptics.Vibrate(VibrationForce.Light);
 
 				/*Physics.IgnoreCollision(holdingObject.GetComponent<Collider>(),
 				                        player.GetComponent<Collider>());*/
@@ -132,11 +144,15 @@ public class ControllerCollision : MonoBehaviour
 		{
 			///Debug.Log("i = " + i);
 			lastPosition[i] = lastPosition[i-1];
+			playerLastPosition[i] = playerLastPosition[i-1];
 			timeStamp[i]    = timeStamp[i-1];
 		}
-		///lastPosition[0] = transform.position;
-		lastPosition[0] = transform.TransformPoint(transform.localPosition);
+		lastPosition[0] = transform.position;
+		///transform.Rotate(player.transform.rotation.eulerAngles);
+		///lastPosition[0] = /*transform.TransformPoint(*/transform.localPosition;///);
+		///transform.Rotate(-player.transform.rotation.eulerAngles);
 		///lastPosition[0] = transform.TransformVector(OVRInput.GetLocalControllerPosition(controller));
+		playerLastPosition[0] = player.transform.position;
 		timeStamp[0]    = Time.time;
 	}
 
@@ -203,22 +219,33 @@ public class ControllerCollision : MonoBehaviour
 			{
 				holdingObject_rigidbody.isKinematic = false;
 				
-				Vector3 a = lastPosition[lastPosition.Length - 1];
-				Vector3 b = lastPosition[0];
+				/*Vector3 a = lastPosition[lastPosition.Length - 1];
+				Vector3 b = lastPosition[0];*/
 				float timeTaken = timeStamp[0] - timeStamp[timeStamp.Length - 1];
+				Vector3 playerVelocity = (playerLastPosition[0] - playerLastPosition[lastPosition.Length - 1]) / timeTaken;
+				Vector3 handVelocity = ((lastPosition[0] - lastPosition[lastPosition.Length - 1]) / timeTaken) - playerVelocity;
+				holdingObject_rigidbody.velocity = playerVelocity + (handVelocity * GL.throwForce);
+				Debug.Log("Player: " + playerVelocity.magnitude + "; Hand: " + handVelocity.magnitude
+						+ "; Ball: " + holdingObject_rigidbody.velocity.magnitude);
 				///float force = GL.throwForce;
 				/*if(OVRInput.GetLocalControllerVelocity(controller).magnitude < 0.001f)
 					force = 1f;*/
 				///holdingObject_rigidbody.velocity = ((b - a) * GL.throwForce) / timeTaken;
-				holdingObject_rigidbody.velocity = (b - a) / timeTaken; // difference in distance and total time taken of last 5 frames
+				///holdingObject_rigidbody.velocity = /*transform.TransformVector*/(b - a) / timeTaken; // difference in distance and total time taken of last 5 frames
 
 				/*Debug.Log("Controller Velocity was " + OVRInput.GetLocalControllerVelocity(controller) + " which is "
 				         							 + OVRInput.GetLocalControllerVelocity(controller).magnitude);
 				holdingObject_rigidbody.velocity =
 							transform.TransformDirection(OVRInput.GetLocalControllerVelocity(controller));*/
+				/*Vector3 hr = holdingObject.transform.localRotation.eulerAngles;
+				Vector3 pr = player.gameObject.transform.rotation.eulerAngles;
+				holdingObject.transform.rotation = Quaternion.Euler(hr+pr);*/
 
 				holdingObject_rigidbody.angularVelocity =
 							transform.TransformDirection(OVRInput.GetLocalControllerAngularVelocity(controller)); // change angle by taking hand controller angle too
+				////holdingObject.transform.SetParent(null);
+
+				///holdingObject.transform.Rotate(player.gameObject.transform.rotation.eulerAngles);
 				if(holdingObject.name == "Ball")
 					if(player.isOnPlatform)
 						GL.BallLaunched(); // determine if ball is launched from stage
@@ -227,6 +254,7 @@ public class ControllerCollision : MonoBehaviour
 			}
 			holdingObject = null;
 			holdingObject_rigidbody = null;
+			haptics.Vibrate(VibrationForce.Light);
 		}
 	}
 }

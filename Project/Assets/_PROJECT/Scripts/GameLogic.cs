@@ -104,6 +104,9 @@ public class GameLogic : MonoBehaviour
 	};
 	public objSpawnerStruct[] objSpawner;
 
+	public OculusHaptics L_haptics;
+	public OculusHaptics R_haptics;
+
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -140,6 +143,9 @@ public class GameLogic : MonoBehaviour
 		controllerInfo = GameObject.Find("ControlsMenu_UI").GetComponent<ControlsMenu>();
 		playerSpeaker = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 		///playerSpeaker = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
+
+		L_haptics = L_controller_GO.GetComponent<OculusHaptics>();
+		R_haptics = R_controller_GO.GetComponent<OculusHaptics>();
 
 		GameObject[] temp = GameObject.FindGameObjectsWithTag("Button");
 		button = new VRButton[temp.Length];
@@ -319,7 +325,14 @@ public class GameLogic : MonoBehaviour
 		L_controller_GO = R_controller_GO;
 		R_controller_GO = temp_controller_GO;
 
+		OculusHaptics temp_haptics;
+		temp_haptics = L_haptics;
+		L_haptics = R_haptics;
+		R_haptics = temp_haptics;
+
 		DisplayMessage("Actions on controllers have switched");
+		L_haptics.VibrateTime(VibrationForce.Medium, 1f);
+		R_haptics.VibrateTime(VibrationForce.Medium, 1f);
 	}
 
 	public void RestartLevelButton()
@@ -363,6 +376,7 @@ public class GameLogic : MonoBehaviour
 			player.InitTeleport(tLoc);
 			playerSpeaker.clip = teleportAudio;
 			playerSpeaker.Play();
+			R_haptics.Vibrate(VibrationForce.Medium);
 		}
 	}
 
@@ -381,7 +395,10 @@ public class GameLogic : MonoBehaviour
 	public void OpenObjectSpawMenu(bool state) // only show object spawner menu when level starts
 	{
 		if(currentLevel != 0)
+		{
 			controllerInput.ObjSpawnMenu_SetActive(state);
+			L_haptics.Vibrate(VibrationForce.Medium);
+		}
 	}
 
 	//  BALL
@@ -394,6 +411,10 @@ public class GameLogic : MonoBehaviour
 		R_maskRend.material.color = ballResetMaskColor; // show red tint for hald second when ball touches ground
 		Invoke("ResetMasks", 0.5f);
 		ResetBall();
+		L_haptics.Vibrate(VibrationForce.Medium);
+		L_haptics.Vibrate(VibrationForce.Medium);
+		R_haptics.Vibrate(VibrationForce.Medium);
+		R_haptics.Vibrate(VibrationForce.Medium);
 		///playerSpeaker.clip = failedTryAudio;
 		///playerSpeaker.Play();
 	}
@@ -442,9 +463,19 @@ public class GameLogic : MonoBehaviour
 						player.nextLevelText_GO.SetActive(false);
 						player.gameOverText_GO.SetActive(true);
 						playerSpeaker.clip = gameOverAudio;
+						L_haptics.VibrateTime(VibrationForce.Hard, 1.5f);
+						R_haptics.VibrateTime(VibrationForce.Hard, 1.5f);
 					}
 					else
+					{
 						playerSpeaker.clip = goalAudio;
+						L_haptics.Vibrate(VibrationForce.Hard);
+						L_haptics.Vibrate(VibrationForce.Hard);
+						L_haptics.Vibrate(VibrationForce.Hard);
+						R_haptics.Vibrate(VibrationForce.Hard);
+						R_haptics.Vibrate(VibrationForce.Hard);
+						R_haptics.Vibrate(VibrationForce.Hard);
+					}
 
 					playerSpeaker.Play();
 					player.gameOverMenu_GO.SetActive(true);
@@ -483,6 +514,8 @@ public class GameLogic : MonoBehaviour
 		{
 			playerSpeaker.clip = starAudio;
 			playerSpeaker.Play();
+			L_haptics.Vibrate(VibrationForce.Hard);
+			R_haptics.Vibrate(VibrationForce.Hard);
 
 			starsCollected++;
 			collidedStar.SetActive(false);
