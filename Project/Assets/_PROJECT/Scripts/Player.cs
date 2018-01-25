@@ -115,15 +115,25 @@ public class Player : MonoBehaviour
 	void OnTriggerStay(Collider collider)
 	{
 		///Debug.Log("Player standing on object with tag: " + collider.transform.tag + "; " + isOnPlatform);
-		if(collider.transform.tag == "Stage") // to check if player is standing on stage
-			isOnPlatform = true; 
-		else
+		if(collider.transform.tag == "Stage" && !isOnPlatform && !isMoving) // to check if player is standing on stage
+		{
+			GL.DisplayMessage("You are now on stage now");
+			isOnPlatform = true;
+		}
+		else if(collider.transform.tag != "Stage" && isOnPlatform)
+		{
+			GL.DisplayMessage("You are <b>not</b> on stage");
 			isOnPlatform = false;
+		}
 	}
 
 	void OnTriggerExit()
 	{
-		isOnPlatform = false;
+		if(isOnPlatform)
+		{
+			GL.DisplayMessage("You are <b>not</b> on stage");
+			isOnPlatform = false;
+		}
 	}
 
 	void Update()

@@ -497,6 +497,7 @@ public class GameLogic : MonoBehaviour
 
 	public void DisplayMessage(string message)
 	{
+		///Debug.Log("Display Message called with message: " + message);
 		message_Text.text = message;
 		message_GO.SetActive(true);
 		CancelInvoke("TurnOff_message_GO");
@@ -505,6 +506,7 @@ public class GameLogic : MonoBehaviour
 
 	public void TurnOff_message_GO()
 	{
+		///Debug.Log("Display Message Turned off");
 		message_GO.SetActive(false);
 	}
 
