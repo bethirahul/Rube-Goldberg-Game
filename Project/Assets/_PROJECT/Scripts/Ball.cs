@@ -33,7 +33,7 @@ public class Ball : MonoBehaviour
 		   collider.transform.tag == "Stage")
 		{
 			GL.BallTouchedGround();
-			///GL.DisplayMessage("Ball fell to the ground");
+			GL.DisplayMessage("Ball fell down, it should fall on the goal");
 		}
 		else if(collider.transform.tag == "Finish")
 			GL.BallTouchedFinish();

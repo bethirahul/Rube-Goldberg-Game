@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
 		///Debug.Log("Player standing on object with tag: " + collider.transform.tag + "; " + isOnPlatform);
 		if(collider.transform.tag == "Stage" && !isOnPlatform && !isMoving) // to check if player is standing on stage
 		{
-			GL.DisplayMessage("You are now on stage now");
+			GL.DisplayMessage("Throw the ball from here");
 			isOnPlatform = true;
 		}
 		else if(collider.transform.tag != "Stage" && isOnPlatform)

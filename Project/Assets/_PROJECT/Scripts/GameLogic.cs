@@ -78,7 +78,7 @@ public class GameLogic : MonoBehaviour
 
 	//  UI
 	private VRButton[] button;
-	private ControlsMenu controllerInfo;	 // Menu showing controller layout and option to switch controllers
+	private ControlsMenu controllerInfo = null;	 // Menu showing controller layout and option to switch controllers
 	public GameObject message_GO;			 // Message overlay while playing game
 	public Text message_Text;				 // text to go into that message overlay
 	public float messageDuration;
@@ -140,7 +140,9 @@ public class GameLogic : MonoBehaviour
 		R_mask = GameObject.Find("Player/TrackingSpace/RightEyeAnchor/Mask");*/
 		L_maskRend = L_mask.GetComponent<Renderer>();
 		R_maskRend = R_mask.GetComponent<Renderer>();
-		controllerInfo = GameObject.Find("ControlsMenu_UI").GetComponent<ControlsMenu>();
+		GameObject temp2 = GameObject.Find("ControlsMenu_UI");
+		if(temp2 != null)
+			controllerInfo = temp2.GetComponent<ControlsMenu>();
 		playerSpeaker = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 		///playerSpeaker = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 
@@ -307,7 +309,8 @@ public class GameLogic : MonoBehaviour
 		else
 			controllerLayout.layout = ControllerLayout.layoutEnum.normal;
 
-		controllerInfo.ChangeControllersInfo();
+		if(controllerInfo != null)
+			controllerInfo.ChangeControllersInfo();
 
 		if(controllerInput.isMenuOpen)
 			controllerInput.ObjSpawnMenu_SetActive(true); // change object spawner menu also along with switching controllers
@@ -463,6 +466,7 @@ public class GameLogic : MonoBehaviour
 						player.nextLevelText_GO.SetActive(false);
 						player.gameOverText_GO.SetActive(true);
 						playerSpeaker.clip = gameOverAudio;
+
 						L_haptics.VibrateTime(VibrationForce.Hard, 1.5f);
 						R_haptics.VibrateTime(VibrationForce.Hard, 1.5f);
 					}
@@ -521,7 +525,8 @@ public class GameLogic : MonoBehaviour
 
 			starsCollected++;
 			collidedStar.SetActive(false);
-			Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
+			///Debug.Log("** Ball touched Star | Total Stars Collected: " + starsCollected);
+			DisplayMessage(starsCollected + " of " + star.Length + " star(s) collected");
 		}
 	}
 
@@ -533,9 +538,9 @@ public class GameLogic : MonoBehaviour
 
 	private void ChangeLevel()
 	{
-		if(totalLevels != currentLevel) // goto main menu after last level
+		if(totalLevels != currentLevel) 
 			InitSceneTransition(SceneTransition.ending);
-		else
+		else // goto main menu after last level
 		{
 			Debug.Log("Moving to Main Menu!");
 			currentLevel = -1;
