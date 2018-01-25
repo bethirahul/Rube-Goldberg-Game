@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using UnityEngine.WSA;
 using UnityEngine.Experimental.U2D;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
