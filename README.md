@@ -3,7 +3,7 @@
 This project is made by **Rahul Bethi** as a part of Udacity Virtual Reality (VR) Nano-degree.
 It is a Oculus Rift compatible Unity game.
 
-### Project DOcuemnt:
+### Project Docuemnt:
 https://medium.com/@rahulbethi/rube-goldberg-game-in-vr-rahul-bethi-59c82583eef1
 
 #### Requirements to run the game:
