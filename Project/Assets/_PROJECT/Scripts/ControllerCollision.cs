@@ -225,8 +225,8 @@ public class ControllerCollision : MonoBehaviour
 				Vector3 playerVelocity = (playerLastPosition[0] - playerLastPosition[lastPosition.Length - 1]) / timeTaken;
 				Vector3 handVelocity = ((lastPosition[0] - lastPosition[lastPosition.Length - 1]) / timeTaken) - playerVelocity;
 				holdingObject_rigidbody.velocity = playerVelocity + (handVelocity * GL.throwForce);
-				Debug.Log("Player: " + playerVelocity.magnitude + "; Hand: " + handVelocity.magnitude
-						+ "; Ball: " + holdingObject_rigidbody.velocity.magnitude);
+				////Debug.Log("Player: " + playerVelocity.magnitude + "; Hand: " + handVelocity.magnitude
+				///		+ "; Ball: " + holdingObject_rigidbody.velocity.magnitude);
 				///float force = GL.throwForce;
 				/*if(OVRInput.GetLocalControllerVelocity(controller).magnitude < 0.001f)
 					force = 1f;*/

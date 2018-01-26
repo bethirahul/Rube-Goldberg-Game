@@ -104,9 +104,15 @@ public class GameLogic : MonoBehaviour
 	};
 	public objSpawnerStruct[] objSpawner;
 
+	//  Haptics
 	public OculusHaptics L_haptics;
 	public OculusHaptics R_haptics;
 
+	//  FPS
+	private GameObject fps_GO;
+	private Text fpsText;
+	private float fpsDeltaTime;
+	private int fps;
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -114,14 +120,19 @@ public class GameLogic : MonoBehaviour
 	{
 		InitLevel();
 		///InvokeRepeating("PrintFrameRate", 0f, 1.0f);
+
+		fps_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor/FPS_UI");
+		fpsText = fps_GO.GetComponentInChildren<Text>();
+		fpsText.text = "0";
+		fps_GO.SetActive(false);
 	}
 
-	private void PrintFrameRate()
+	/*private void PrintFrameRate()
 	{
 		float temp = 1.0f/Time.deltaTime;
 		if(temp < 90 && temp != 50)
 			Debug.Log(Time.time + ": Frame Rate below 90, its " + temp);
-	}
+	}*/
 
 	//  INIT LEVEL
 	private void InitLevel()
@@ -157,6 +168,7 @@ public class GameLogic : MonoBehaviour
 		message_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor/Message_UI");
 		///message_GO = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor/Message_UI");
 		message_Text = message_GO.GetComponentInChildren<Text>();
+		message_GO.transform.LookAt(centerCamTransform);
 
 		// Controller Layout
 		if(controllerLayout.layout == ControllerLayout.layoutEnum.reversed)
@@ -225,6 +237,22 @@ public class GameLogic : MonoBehaviour
 		TeleportPlayer();
 		StarsLookAtPlayer();
 		CheckSceneTransition();
+		UpdateFPS();
+	}
+
+	private void UpdateFPS()
+	{
+		fpsDeltaTime += (Time.unscaledDeltaTime - fpsDeltaTime) * 0.1f;
+		fps = (int)(1.0f / fpsDeltaTime);
+		///string text = string.Format("{0:0.}", fps);
+		if(fps < 87 && sceneTransition == SceneTransition.complete)
+		{
+			if(!fps_GO.activeSelf)
+				fps_GO.SetActive(true);
+			fpsText.text = "FPS: " + fps;
+		}
+		else if(fps_GO.activeSelf)
+			fps_GO.SetActive(false);
 	}
 
 	private void StarsLookAtPlayer()
@@ -532,7 +560,7 @@ public class GameLogic : MonoBehaviour
 
 	public void BallLaunched()
 	{
-		Debug.Log("Ball launched from platform ---------------------------");
+		///Debug.Log("Ball launched from platform ---------------------------");
 		isGameStarted = true;
 	}
 
