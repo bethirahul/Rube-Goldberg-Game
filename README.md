@@ -6,12 +6,13 @@ It is a Oculus Rift compatible Unity game.
 ### Project Docuemnt:
 https://medium.com/@rahulbethi/rube-goldberg-game-in-vr-rahul-bethi-59c82583eef1
 
-#### Requirements to run the game:
-Open Project folder using Unity(2017.3.0f3) for source code.
+#### How to open the source code:
+Open Project folder using Unity(2017.3.0f3).
 
 #### Requirements to run the game:
 Oculus Rift with Touch controllers and compatible Windows machine to run VR games.
 _Game Link: https://goo.gl/M5DZ7m_
+Open the executable file to run the game.
 
 **Duration: 3~4 weeks**
 
