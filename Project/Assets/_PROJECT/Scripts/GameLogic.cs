@@ -109,10 +109,10 @@ public class GameLogic : MonoBehaviour
 	public OculusHaptics R_haptics;
 
 	//  FPS
-	private GameObject fps_GO;
+	/*private GameObject fps_GO;
 	private Text fpsText;
 	private float fpsDeltaTime;
-	private int fps;
+	private int fps;*/
 	#endregion
 
 	//   S T A R T                                                                                                      
@@ -121,10 +121,10 @@ public class GameLogic : MonoBehaviour
 		InitLevel();
 		///InvokeRepeating("PrintFrameRate", 0f, 1.0f);
 
-		fps_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor/FPS_UI");
+		/*fps_GO = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/CenterEyeAnchor/FPS_UI");
 		fpsText = fps_GO.GetComponentInChildren<Text>();
 		fpsText.text = "0";
-		fps_GO.SetActive(false);
+		fps_GO.SetActive(false);*/
 	}
 
 	/*private void PrintFrameRate()
@@ -139,12 +139,12 @@ public class GameLogic : MonoBehaviour
 	{
 		// Components
 		controllerLayout = GameObject.Find("ControllerLayout").GetComponent<ControllerLayout>();
-		player = GameObject.Find("Player").GetComponent<Player>();
+		player = GameObject.Find("VRCameraRig").GetComponent<Player>();
 		controllerInput = player.gameObject.GetComponent<ControllerInput>();
-		L_controller_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/LeftHandAnchor");
-		R_controller_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/RightHandAnchor");
-		L_mask = GameObject.Find("Player/OVRCameraRig/TrackingSpace/LeftEyeAnchor/Mask");
-		R_mask = GameObject.Find("Player/OVRCameraRig/TrackingSpace/RightEyeAnchor/Mask");
+		L_controller_GO = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/LeftHandAnchor");
+		R_controller_GO = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/RightHandAnchor");
+		L_mask = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/LeftEyeAnchor/Mask");
+		R_mask = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/RightEyeAnchor/Mask");
 		/*L_controller_GO = GameObject.Find("Player/TrackingSpace/LeftHandAnchor");
 		R_controller_GO = GameObject.Find("Player/TrackingSpace/RightHandAnchor");
 		L_mask = GameObject.Find("Player/TrackingSpace/LeftEyeAnchor/Mask");
@@ -154,7 +154,7 @@ public class GameLogic : MonoBehaviour
 		GameObject temp2 = GameObject.Find("ControlsMenu_UI");
 		if(temp2 != null)
 			controllerInfo = temp2.GetComponent<ControlsMenu>();
-		playerSpeaker = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
+		playerSpeaker = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 		///playerSpeaker = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor").GetComponent<AudioSource>();
 
 		L_haptics = L_controller_GO.GetComponent<OculusHaptics>();
@@ -165,7 +165,7 @@ public class GameLogic : MonoBehaviour
 		for(int i = 0; i < button.Length; i++)
 			button[i] = temp[i].GetComponent<VRButton>(); // Stores all objeccts which are buttons
 
-		message_GO = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor/Message_UI");
+		message_GO = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/CenterEyeAnchor/Message_UI");
 		///message_GO = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor/Message_UI");
 		message_Text = message_GO.GetComponentInChildren<Text>();
 		message_GO.transform.LookAt(centerCamTransform);
@@ -188,7 +188,7 @@ public class GameLogic : MonoBehaviour
 		{
 			ball = GameObject.Find("Ball").GetComponent<Ball>();
 
-			centerCamTransform = GameObject.Find("Player/OVRCameraRig/TrackingSpace/CenterEyeAnchor").transform;
+			centerCamTransform = GameObject.Find("VRCameraRig/OVRCameraRig/TrackingSpace/CenterEyeAnchor").transform;
 			///centerCamTransform = GameObject.Find("Player/TrackingSpace/CenterEyeAnchor").transform;
 
 
@@ -237,10 +237,10 @@ public class GameLogic : MonoBehaviour
 		TeleportPlayer();
 		StarsLookAtPlayer();
 		CheckSceneTransition();
-		UpdateFPS();
+		///UpdateFPS();
 	}
 
-	private void UpdateFPS()
+	/*private void UpdateFPS()
 	{
 		fpsDeltaTime += (Time.unscaledDeltaTime - fpsDeltaTime) * 0.1f;
 		fps = (int)(1.0f / fpsDeltaTime);
@@ -253,7 +253,7 @@ public class GameLogic : MonoBehaviour
 		}
 		else if(fps_GO.activeSelf)
 			fps_GO.SetActive(false);
-	}
+	}*/
 
 	private void StarsLookAtPlayer()
 	{
@@ -476,7 +476,7 @@ public class GameLogic : MonoBehaviour
 	{
 		if(ball.gameObject.transform.parent == null) // check if ball is wantedly touched while holding in hand
 		{
-			Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + star.Length);///totalStars);
+			///Debug.Log("**** Ball touched Finish, " + starsCollected + ":" + star.Length);///totalStars);
 			if(isGameStarted) // check if ball is thrown from stage
 			{
 				if(starsCollected >= star.Length) // check if all stars are collected
@@ -570,7 +570,7 @@ public class GameLogic : MonoBehaviour
 			InitSceneTransition(SceneTransition.ending);
 		else // goto main menu after last level
 		{
-			Debug.Log("Moving to Main Menu!");
+			///Debug.Log("Moving to Main Menu!");
 			currentLevel = -1;
 			InitSceneTransition(SceneTransition.ending);
 		}

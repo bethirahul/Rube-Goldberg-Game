@@ -172,7 +172,7 @@ public class ControllerInput : MonoBehaviour
 		// Object Spawner Menu
 		if(OVRInput.GetDown(OVRInput.Button.Two, GL.L_controller))
 		{
-			Debug.Log("Object Spawner Menu Button pressed");
+			///Debug.Log("Object Spawner Menu Button pressed");
 			GL.OpenObjectSpawMenu(!isMenuOpen); // Toggle for object menu spawner
 			///ObjSpawnMenu_SetActive(!isMenuOpen);
 		}
@@ -197,7 +197,7 @@ public class ControllerInput : MonoBehaviour
 			}
 			if(OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, GL.L_controller)) // spawn shown object when joystick button is pressed
 			{
-				Debug.Log("Joystick Button Pressed");
+				///Debug.Log("Joystick Button Pressed");
 				///////////////////////////////////Spawn object
 				if(GL.objSpawner[displayCount].left > 0) // check if objects are left to be spawned
 				{
